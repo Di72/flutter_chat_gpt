@@ -3,6 +3,7 @@ import 'package:flutter_chat_gpt/core/domain/providers/localization_provider.dar
 import 'package:flutter_chat_gpt/shared/commom_libs.dart';
 import 'package:flutter_chat_gpt/core/domain/providers/theme_provider.dart';
 import 'package:flutter_chat_gpt/shared/styles/styles.dart';
+import 'package:flutter_chat_gpt/shared/utils/app_shortcuts.dart';
 
 class ChatGptApp extends ConsumerWidget {
   const ChatGptApp({super.key});
@@ -16,6 +17,7 @@ class ChatGptApp extends ConsumerWidget {
         routeInformationProvider: appRouter.routeInformationProvider,
         routeInformationParser: appRouter.routeInformationParser,
         routerDelegate: appRouter.routerDelegate,
+        shortcuts: AppShortcuts.defaults,
         theme: themeNotifier.maybeWhen(
           data: (themeMode) => getThemeData(themeMode),
           orElse: () => getThemeData(ThemeMode.system),
