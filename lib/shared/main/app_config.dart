@@ -14,8 +14,6 @@ class AppConfig {
       ),
     );
 
-    WidgetsFlutterBinding.ensureInitialized();
-
     EnvInfo.initialize(environment);
 
     if (PlatformInfo.isDesktop) {
