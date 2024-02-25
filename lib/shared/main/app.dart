@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_gpt/core/domain/providers/localization_provider.dart';
 import 'package:flutter_chat_gpt/shared/commom_libs.dart';
 import 'package:flutter_chat_gpt/core/domain/providers/theme_provider.dart';
-import 'package:flutter_chat_gpt/shared/styles/styles.dart';
 import 'package:flutter_chat_gpt/shared/utils/app_shortcuts.dart';
 
 class ChatGptApp extends ConsumerWidget {
+  static late final AppLocalizations? strings;
+
   const ChatGptApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context, ref) {
     final themeNotifier = ref.watch(themeProvider);
+    final locale = ref.watch(localizationProvider);
 
     return CupertinoApp.router(
         debugShowCheckedModeBanner: false,
@@ -18,10 +20,8 @@ class ChatGptApp extends ConsumerWidget {
         routeInformationParser: appRouter.routeInformationParser,
         routerDelegate: appRouter.routerDelegate,
         shortcuts: AppShortcuts.defaults,
-        theme: themeNotifier.maybeWhen(
-          data: (themeMode) => getThemeData(themeMode),
-          orElse: () => getThemeData(ThemeMode.system),
-        ),
+        locale: locale,
+        theme: getThemeData(themeNotifier),
         localizationsDelegates: const [
           AppLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
@@ -31,11 +31,3 @@ class ChatGptApp extends ConsumerWidget {
         supportedLocales: AppLocalizations.supportedLocales);
   }
 }
-
-final container = ProviderContainer();
-
-final localizationService = container.read(localizationProvider.notifier);
-
-/// Global helpers for readability
-AppLocalizations get $strings => localizationService.strings;
-AppStyle get $styles => ChatGptAppScaffold.style;

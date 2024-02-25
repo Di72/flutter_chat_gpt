@@ -40,14 +40,13 @@ class AppRoute extends GoRoute {
         );
 }
 
-class ChatGptAppScaffold extends StatelessWidget {
+class ChatGptAppScaffold extends ConsumerWidget {
   const ChatGptAppScaffold({super.key, required this.child});
   final Widget child;
-  static AppStyle get style => _style;
-  static AppStyle _style = AppStyle();
+  static late AppStyle style;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // Listen to the device size, and update AppStyle when it changes
 
     final mq = MediaQuery.of(context);
@@ -56,7 +55,10 @@ class ChatGptAppScaffold extends StatelessWidget {
     // Animate.defaultDuration = _style.times.fast;
     // Create a style object that will be passed down the widget tree
 
-    _style = AppStyle(screenSize: context.sizePx);
+    style = AppStyle(
+      screenSize: context.sizePx,
+      localeName: AppLocalizations.of(context).localeName,
+    );
     return KeyedSubtree(
       key: ValueKey($styles.scale),
       child: DefaultTextStyle(
@@ -68,3 +70,5 @@ class ChatGptAppScaffold extends StatelessWidget {
     );
   }
 }
+
+AppStyle get $styles => ChatGptAppScaffold.style;

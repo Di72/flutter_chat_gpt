@@ -8,35 +8,33 @@ import 'package:flutter_chat_gpt/shared/commom_libs.dart';
 import 'package:flutter_chat_gpt/core/domain/providers/isar_storage_service_provider.dart';
 
 class ThemeService extends ThemeServiceAsyncNotifier {
-  late Isar? _isar;
+  Isar? _isar;
+  ThemeMode theme = ThemeMode.system;
 
   @override
-  Future<ThemeMode> build() async {
-    _isar = await ref.watch(storageServiceProvider.notifier).future;
-    ThemeMode theme = getTheme();
+  ThemeMode build() {
+    getTheme();
     return theme;
   }
 
   @override
   Future<void> setTheme(ThemeMode theme) async {
-    ThemeCollection currentTheme = _getCurrentTheme();
+    ThemeCollection currentTheme = await _getCurrentTheme();
     currentTheme.theme = theme;
+    state = theme;
     _isar?.writeTxnSync(
       () => _isar?.themeCollections.putSync(currentTheme),
     );
-    state = AsyncValue.data(theme);
   }
 
   @override
-  ThemeMode getTheme() {
-    ThemeCollection? themeCollection = _getCurrentTheme();
-    ThemeMode theme = themeCollection.theme;
-    state = AsyncValue.data(theme);
-
-    return theme;
+  Future<void> getTheme() async {
+    ThemeCollection? themeCollection = await _getCurrentTheme();
+    state = themeCollection.theme;
   }
 
-  ThemeCollection _getCurrentTheme() {
+  Future<ThemeCollection> _getCurrentTheme() async {
+    _isar = await ref.read(storageServiceProvider.future);
     ThemeCollection? theme = _isar?.themeCollections.getSync(THEME_STORAGE_ID);
     if (theme == null) {
       theme = ThemeCollection(ThemeMode.system);

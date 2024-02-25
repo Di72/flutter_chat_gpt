@@ -5,56 +5,40 @@ import 'package:flutter_chat_gpt/core/domain/models/collections/localization_col
 import 'package:flutter_chat_gpt/shared/commom_libs.dart';
 import 'package:flutter_chat_gpt/core/domain/providers/isar_storage_service_provider.dart';
 
-class LocalizationService extends LocalizationServiceAsyncNotifier {
-  late Isar? _isar;
-  AppLocalizations? _strings;
-  final Locale _defaultLocal = const Locale('en');
+class LocalizationService extends LocalizationServiceNotifier {
+  late final Isar? _isar;
+
+  Locale locale = const Locale('en');
 
   @override
-  AppLocalizations get strings => _strings!;
-  @override
-  bool get isLoaded => _strings != null;
-
-  @override
-  Future<AppLocalizations> build() async {
-    _isar = await ref.watch(storageServiceProvider.notifier).future;
-    await getLocalization();
-    return strings;
+  Locale build() {
+    getLocalization();
+    return locale;
   }
 
   @override
   Future<void> getLocalization() async {
+    _isar = await ref.read(storageServiceProvider.future);
     final isar = _isar;
-    Locale locale = _defaultLocal;
 
     String? localeCode = isar?.localizationCollections
             .getSync(LOCALE_STORAGE_ID)
             ?.languageCode ??
         await findSystemLocale();
-    locale = Locale(localeCode.split('_')[0]);
-    if (AppLocalizations.supportedLocales.contains(locale) == false) {
-      locale = _defaultLocal;
-    }
-
-    await _saveLocalization(locale);
+    state = Locale(localeCode.split('_')[0]);
   }
 
   @override
-  Future<void> setLocalization(Locale locale) async {
-    bool didChange = _strings?.localeName != locale.languageCode;
+  Future<void> setLocalization(Locale newLocale) async {
+    bool didChange = newLocale.languageCode != state.languageCode;
     if (didChange && AppLocalizations.supportedLocales.contains(locale)) {
-      await _saveLocalization(locale);
+      state = newLocale;
+      final isar = _isar;
+      isar?.writeTxnSync(() {
+        isar.localizationCollections.putSync(
+          LocalizationCollection(newLocale.languageCode, newLocale.countryCode),
+        );
+      });
     }
-  }
-
-  Future<void> _saveLocalization(Locale locale) async {
-    final isar = _isar;
-    isar?.writeTxnSync(() {
-      isar.localizationCollections.putSync(
-        LocalizationCollection(locale.languageCode, locale.countryCode),
-      );
-    });
-
-    _strings = await AppLocalizations.delegate.load(locale);
   }
 }

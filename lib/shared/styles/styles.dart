@@ -1,13 +1,14 @@
 import 'dart:ui';
-
-import 'package:flutter_chat_gpt/core/domain/providers/localization_provider.dart';
 import 'package:flutter_chat_gpt/shared/commom_libs.dart';
 
 export 'colors.dart';
 
 @immutable
 class AppStyle {
-  AppStyle({Size? screenSize}) {
+  AppStyle({
+    Size? screenSize,
+    String? localeName,
+  }) {
     if (screenSize == null) {
       scale = 1;
       return;
@@ -28,16 +29,16 @@ class AppStyle {
     } else {
       scale = .85; // small phone
     }
-    //debugPrint('screenSize=$screenSize, scale=$scale');
   }
 
   late final double scale;
+  String? localeName;
 
   /// The current theme colors for the app
   final AppColors colors = AppColors();
 
   /// Text styles
-  late final _Text text = _Text(scale);
+  late final _Text text = _Text(scale, localeName);
 
   /// Shared sizes
   late final _Sizes sizes = _Sizes();
@@ -45,8 +46,9 @@ class AppStyle {
 
 @immutable
 class _Text {
-  _Text(this._scale);
+  _Text(this._scale, this._localeName);
   final double _scale;
+  final String? _localeName;
 
   final Map<String, TextStyle> _titleFonts = {
     'en': TextStyle(fontFamily: 'Tenor'),
@@ -72,12 +74,9 @@ class _Text {
   };
 
   TextStyle _getFontForLocale(Map<String, TextStyle> fonts) {
-    final localizationCollection =
-        container.read(localizationProvider.notifier);
-
-    if (localizationCollection.isLoaded) {
+    if (_localeName != null) {
       return fonts.entries
-          .firstWhere((x) => x.key == $strings.localeName,
+          .firstWhere((x) => x.key == _localeName,
               orElse: () => fonts.entries.first)
           .value;
     } else {

@@ -11,7 +11,10 @@ Future<void> mainCommon(AppEnvironment environment) async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   // Keep native splash screen up until app is finished bootstrapping
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  await AppConfig().bootstrap(environment);
+  // Remove splash screen when bootstrap is complete
 
+  FlutterNativeSplash.remove();
   // Start app
   runApp(
     ProviderScope(
@@ -22,7 +25,4 @@ Future<void> mainCommon(AppEnvironment environment) async {
       child: const ChatGptApp(),
     ),
   );
-  await AppConfig().bootstrap(environment);
-  // Remove splash screen when bootstrap is complete
-  FlutterNativeSplash.remove();
 }

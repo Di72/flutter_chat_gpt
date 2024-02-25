@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_gpt/core/domain/providers/localization_provider.dart';
 import 'package:flutter_chat_gpt/shared/commom_libs.dart';
 import 'package:flutter_chat_gpt/core/domain/providers/theme_provider.dart';
 import 'package:rive/rive.dart';
@@ -36,7 +37,7 @@ class ChatListScreen extends ConsumerWidget {
                   color: AppColors.activeGreen,
                   size: 22,
                 ),
-                largeTitle: Text(AppLocalizations.of(context).notes),
+                largeTitle: Text(AppLocalizations.of(context).notes ?? ""),
                 trailing: CascadingMenu(),
               ),
               SliverList(
@@ -50,7 +51,7 @@ class ChatListScreen extends ConsumerWidget {
                             color: AppColors.darkBackgroundGray,
                             borderRadius: BorderRadius.circular(12)),
                         height: 60,
-                        child: Text(AppLocalizations.of(context).system),
+                        child: Text(AppLocalizations.of(context).system ?? ""),
                       ),
                     ),
                   ),
@@ -95,11 +96,11 @@ class ChatListScreen extends ConsumerWidget {
 class CascadingMenu extends ConsumerWidget {
   bool isOpen = false;
 
-  CascadingMenu({super.key});
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeNotifier = ref.read(themeProvider.notifier);
+    final localizationServiceNotifier = ref.read(localizationProvider.notifier);
+
     return Column(
       children: <Widget>[
         custom.MenuAnchor(
@@ -112,7 +113,7 @@ class CascadingMenu extends ConsumerWidget {
           },
           style: MenuStyle(
             backgroundColor: MaterialStateProperty.all(
-              Color(0xFF2C2C2E).withOpacity(0.85),
+              AppColors.semiBlack.withOpacity(0.85),
             ),
             shape: MaterialStateProperty.all(
               RoundedRectangleBorder(
@@ -137,7 +138,7 @@ class CascadingMenu extends ConsumerWidget {
                 menuStyle: MenuStyle(
                     shadowColor: MaterialStateProperty.all(AppColors.black),
                     backgroundColor: MaterialStateProperty.all(
-                      Color(0xFF2C2C2E).withOpacity(0.85),
+                      AppColors.semiBlack.withOpacity(0.85),
                     ),
                     shape: MaterialStateProperty.all(
                       RoundedRectangleBorder(
@@ -152,57 +153,18 @@ class CascadingMenu extends ConsumerWidget {
                             color: AppColors.secondarySystemFill, width: 1),
                       ),
                     ),
-                    child: custom.MenuItemButton(
-                      onPressed: () {},
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          top: 4,
-                          bottom: 4,
-                        ),
-                        child: Row(
-                          children: [
-                            true
-                                ? Icon(
-                                    AppIcons.checkmarkAlt,
-                                    color: AppColors.white,
-                                  )
-                                : Gap(4),
-                            Gap(6),
-                            Text(
-                              AppLocalizations.of(context).english,
-                              style: TextStyle(color: AppColors.white),
-                            ),
-                            Gap(4),
-                          ],
-                        ),
-                      ),
+                    child: MenuItemButtonWithCheckMark(
+                      AppLocalizations.of(context).english,
+                      onPressed: () => localizationServiceNotifier
+                          .setLocalization(Locale("en")),
+                      isShowMark: true,
                     ),
                   ),
-                  custom.MenuItemButton(
-                    onPressed: () {},
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        top: 4,
-                        bottom: 4,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          false
-                              ? Icon(
-                                  AppIcons.checkmarkAlt,
-                                  color: AppColors.white,
-                                )
-                              : Gap(24),
-                          Gap(6),
-                          Text(
-                            AppLocalizations.of(context).russian,
-                            style: TextStyle(color: AppColors.white),
-                          ),
-                          Gap(4),
-                        ],
-                      ),
-                    ),
+                  MenuItemButtonWithCheckMark(
+                    AppLocalizations.of(context).russian,
+                    onPressed: () => localizationServiceNotifier
+                        .setLocalization(Locale("ru")),
+                    isShowMark: true,
                   ),
                 ],
                 child: Padding(
@@ -216,7 +178,7 @@ class CascadingMenu extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        AppLocalizations.of(context).language,
+                        AppLocalizations.of(context).language ?? "",
                         style: TextStyle(color: AppColors.white),
                       ),
                       Text(
@@ -239,7 +201,7 @@ class CascadingMenu extends ConsumerWidget {
               menuStyle: MenuStyle(
                 shadowColor: MaterialStateProperty.all(AppColors.black),
                 backgroundColor: MaterialStateProperty.all(
-                  Color(0xFF2C2C2E).withOpacity(0.85),
+                  AppColors.semiBlack.withOpacity(0.85),
                 ),
               ),
               menuChildren: <Widget>[
@@ -276,11 +238,11 @@ class CascadingMenu extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      AppLocalizations.of(context).theme,
+                      AppLocalizations.of(context).theme ?? "",
                       style: TextStyle(color: AppColors.white),
                     ),
                     Text(
-                      AppLocalizations.of(context).dark,
+                      AppLocalizations.of(context).dark ?? "",
                       style:
                           TextStyle(color: AppColors.systemGrey2, fontSize: 13),
                     ),
@@ -313,6 +275,49 @@ class CascadingMenu extends ConsumerWidget {
           },
         ),
       ],
+    );
+  }
+}
+
+class MenuItemButtonWithCheckMark extends StatelessWidget {
+  const MenuItemButtonWithCheckMark(
+    this.title, {
+    super.key,
+    this.onPressed,
+    this.isShowMark = false,
+  });
+
+  final bool isShowMark;
+  final String? title;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return custom.MenuItemButton(
+      onPressed: onPressed,
+      child: Padding(
+        padding: const EdgeInsets.only(
+          top: 4,
+          bottom: 4,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            isShowMark
+                ? Icon(
+                    AppIcons.checkmarkAlt,
+                    color: AppColors.white,
+                  )
+                : Gap(24),
+            Gap(6),
+            Text(
+              title ?? "",
+              style: TextStyle(color: AppColors.white),
+            ),
+            Gap(4),
+          ],
+        ),
+      ),
     );
   }
 }
