@@ -1,6 +1,8 @@
-import 'package:flutter_chat_gpt/shared/styles/styles.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_chat_gpt/features/current_chat/presentation/current_chat.dart';
+import 'package:flutter_chat_gpt/shared/main/app_scaffold.dart';
 import 'package:flutter_chat_gpt/shared/commom_libs.dart';
-import 'package:flutter_chat_gpt/temp.dart';
+import 'package:flutter_chat_gpt/features/list_chat/presentation/list_chat.dart';
 
 class ScreenPaths {
   static String home = '/';
@@ -17,58 +19,28 @@ final GoRouter appRouter = GoRouter(
       routes: <RouteBase>[
         AppRoute(
           ScreenPaths.home,
-          (_) => const ChatListScreen(),
+          (_) => const ListChatScreen(),
         ),
         AppRoute(
           ScreenPaths.details,
-          (_) => const ChatScreen(),
+          (_) => const CurrentChatScreen(),
         ),
       ],
     )
   ],
 );
 
+/// Custom GoRoute sub-class to make the router declaration easier to read
 class AppRoute extends GoRoute {
   AppRoute(String path, Widget Function(GoRouterState s) page,
       {List<GoRoute> routes = const []})
       : super(
           path: path,
           routes: routes,
-          pageBuilder: (context, state) => CupertinoPage(
-            child: page(state),
-          ),
+          pageBuilder: (context, state) {
+            return CupertinoPage(
+              child: page(state),
+            );
+          },
         );
 }
-
-class ChatGptAppScaffold extends ConsumerWidget {
-  const ChatGptAppScaffold({super.key, required this.child});
-  final Widget child;
-  static late AppStyle style;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Listen to the device size, and update AppStyle when it changes
-
-    final mq = MediaQuery.of(context);
-
-    // Set default timing for animations in the app
-    // Animate.defaultDuration = _style.times.fast;
-    // Create a style object that will be passed down the widget tree
-
-    style = AppStyle(
-      screenSize: context.sizePx,
-      localeName: AppLocalizations.of(context).localeName,
-    );
-    return KeyedSubtree(
-      key: ValueKey($styles.scale),
-      child: DefaultTextStyle(
-        style: $styles.text.body,
-
-        // Use a custom scroll behavior across entire app
-        child: child,
-      ),
-    );
-  }
-}
-
-AppStyle get $styles => ChatGptAppScaffold.style;

@@ -1,11 +1,12 @@
 /// Consolidate imports that are common across the app.
 
-export 'package:flutter/cupertino.dart';
+export 'package:flutter/material.dart';
 export 'package:flutter/services.dart';
 export 'package:flutter_chat_gpt/core/data/storage/isar_storage_service.dart';
 export 'package:flutter_localizations/flutter_localizations.dart';
 export 'package:flutter_gen/gen_l10n/app_localizations.dart';
-export 'package:flutter_riverpod/flutter_riverpod.dart';
+export 'package:hooks_riverpod/hooks_riverpod.dart';
+export 'package:flutter_hooks/flutter_hooks.dart';
 export 'package:gap/gap.dart';
 export 'package:go_router/go_router.dart';
 export 'package:flutter_chat_gpt/shared/widgets/button_wrapper.dart';

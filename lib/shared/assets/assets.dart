@@ -1,4 +1,4 @@
-import 'package:flutter_chat_gpt/shared/commom_libs.dart';
+import 'package:flutter/cupertino.dart';
 
 class ImagePaths {
   static String root = 'assets/images';

@@ -22,9 +22,9 @@ class IsarStorageService extends StorageServiceAsyncNotifier {
 
   @override
   Future<Isar> openIsar() async {
-    final Directory dir = await getApplicationDocumentsDirectory();
-
     if (Isar.instanceNames.isEmpty) {
+      final Directory dir = await getApplicationDocumentsDirectory();
+
       await Isar.open(
         [ThemeCollectionSchema, LocalizationCollectionSchema],
         inspector: true,

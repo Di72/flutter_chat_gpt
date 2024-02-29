@@ -3,7 +3,6 @@ import 'package:flutter_chat_gpt/shared/commom_libs.dart';
 
 export 'colors.dart';
 
-@immutable
 class AppStyle {
   AppStyle({
     Size? screenSize,
