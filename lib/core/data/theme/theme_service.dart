@@ -38,7 +38,7 @@ class ThemeService extends ThemeServiceAsyncNotifier {
     ThemeCollection? theme = _isar?.themeCollections.getSync(THEME_STORAGE_ID);
     if (theme == null) {
       theme = ThemeCollection(ThemeMode.system);
-      _isar?.writeTxnSync(() {
+      await _isar?.writeTxn(() async {
         _isar?.themeCollections.put(theme!);
       });
       theme = _isar?.themeCollections.getSync(THEME_STORAGE_ID);

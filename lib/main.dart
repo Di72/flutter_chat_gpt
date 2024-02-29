@@ -3,6 +3,7 @@ import 'package:flutter_chat_gpt/shared/commom_libs.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_chat_gpt/shared/main/app_config.dart';
 import 'package:flutter_chat_gpt/shared/main/observers.dart';
+import 'package:statsfl/statsfl.dart';
 
 // By default run app in prod mode
 void main() => mainCommon(AppEnvironment.PROD);
@@ -22,7 +23,18 @@ Future<void> mainCommon(AppEnvironment environment) async {
         // For logging the state of providers
         Observers(),
       ],
-      child: const ChatGptApp(),
+      // FPS monitor
+      child: StatsFl(
+        isEnabled: true,
+        width: 200,
+        height: 20,
+        maxFps: 90,
+        showText: true,
+        sampleTime: .5,
+        totalTime: 10,
+        align: Alignment.bottomLeft,
+        child: const ChatGptApp(),
+      ),
     ),
   );
 }

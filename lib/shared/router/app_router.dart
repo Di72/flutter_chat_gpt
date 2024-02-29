@@ -38,8 +38,13 @@ class AppRoute extends GoRoute {
           path: path,
           routes: routes,
           pageBuilder: (context, state) {
-            return CupertinoPage(
+            return CustomTransitionPage(
+              key: state.pageKey,
               child: page(state),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                return FadeTransition(opacity: animation, child: child);
+              },
             );
           },
         );

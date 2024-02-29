@@ -10,8 +10,7 @@ class ListChatScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final animationController =
-        useAnimationController(duration: 200.milliseconds);
+    final animationController = useAnimationController();
 
     return Stack(
       children: [
@@ -36,21 +35,10 @@ class ListChatScreen extends HookWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: ButtonWrapper(
-                      onTap: () {},
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: AppColors.darkBackgroundGray,
-                            borderRadius: BorderRadius.circular(12)),
-                        height: 60,
-                        child: Text(AppLocalizations.of(context).system),
-                      ),
-                    ),
-                  ),
-                  const Gap(16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: ButtonWrapper(
-                      onTap: () {},
+                      onTap: () {
+                        animationController.forward();
+                        context.push(ScreenPaths.details);
+                      },
                       child: Container(
                         decoration: BoxDecoration(
                             color: AppColors.darkBackgroundGray,
@@ -65,14 +53,7 @@ class ListChatScreen extends HookWidget {
               ),
             ),
           ],
-        )
-            .animate(
-              controller: animationController,
-              autoPlay: false,
-              onComplete: (controller) => Future.delayed(300.milliseconds)
-                  .then((val) => controller.reverse()),
-            )
-            .fadeOut(duration: 200.milliseconds),
+        ),
         Positioned(
           bottom: 110,
           right: 120,
@@ -102,15 +83,19 @@ class ListChatScreen extends HookWidget {
               ),
             ),
           ),
-        )
-            .animate(
-              controller: animationController,
-              autoPlay: false,
-              onComplete: (controller) => Future.delayed(300.milliseconds)
-                  .then((val) => controller.reverse()),
-            )
-            .fadeOut(duration: 200.milliseconds),
+        ),
       ],
-    );
+    )
+        .animate(
+          controller: animationController,
+          autoPlay: false,
+          onComplete: (controller) => controller.reverse(),
+        )
+        .moveX(
+          duration: 400.milliseconds,
+          end: 300,
+          curve: Curves.easeIn,
+        )
+        .fadeOut();
   }
 }

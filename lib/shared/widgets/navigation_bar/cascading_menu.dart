@@ -61,32 +61,40 @@ class CascadingMenu extends ConsumerWidget {
             ),
           ),
           menuChildren: <Widget>[
-            CascadingMenuCard(
-              title: AppLocalizations.of(context).language,
-              subTitle: getLocalizationName(localization.languageCode),
-              icon: AppIcons.textAlignleft,
-              cardChildren: <Widget>[
-                DecoratedBox(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                          color: AppColors.secondarySystemFill, width: 1),
+            DecoratedBox(
+              decoration: const BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                      color: AppColors.secondarySystemFill, width: 1),
+                ),
+              ),
+              child: CascadingMenuCard(
+                title: AppLocalizations.of(context).language,
+                subTitle: getLocalizationName(localization.languageCode),
+                icon: AppIcons.textAlignleft,
+                cardChildren: <Widget>[
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                            color: AppColors.secondarySystemFill, width: 1),
+                      ),
+                    ),
+                    child: MenuItemButtonWithCheckMark(
+                      AppLocalizations.of(context).english,
+                      onPressed: () =>
+                          localizationNotifier.setLocalization(Locale("en")),
+                      isShowMark: localization == Locale("en"),
                     ),
                   ),
-                  child: MenuItemButtonWithCheckMark(
-                    AppLocalizations.of(context).english,
+                  MenuItemButtonWithCheckMark(
+                    AppLocalizations.of(context).russian,
                     onPressed: () =>
-                        localizationNotifier.setLocalization(Locale("en")),
-                    isShowMark: localization == Locale("en"),
+                        localizationNotifier.setLocalization(Locale("ru")),
+                    isShowMark: localization == Locale("ru"),
                   ),
-                ),
-                MenuItemButtonWithCheckMark(
-                  AppLocalizations.of(context).russian,
-                  onPressed: () =>
-                      localizationNotifier.setLocalization(Locale("ru")),
-                  isShowMark: localization == Locale("ru"),
-                ),
-              ],
+                ],
+              ),
             ),
             CascadingMenuCard(
               title: AppLocalizations.of(context).theme,
