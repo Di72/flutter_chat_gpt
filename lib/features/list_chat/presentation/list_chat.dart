@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_chat_gpt/shared/commom_libs.dart';
 
 import 'package:flutter_chat_gpt/shared/widgets/navigation_bar/cascading_menu.dart';
+import 'package:intl/intl.dart';
 import 'package:rive/rive.dart';
 
 class ListChatScreen extends HookWidget {
@@ -11,6 +12,8 @@ class ListChatScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final animationController = useAnimationController();
+    final items = useState(List<Map<String, DateTime>>.generate(
+        100, (index) => {'Chat $index': DateTime.now()}));
 
     return Stack(
       children: [
@@ -29,34 +32,52 @@ class ListChatScreen extends HookWidget {
               largeTitle: Text(AppLocalizations.of(context).notes),
               trailing: const CascadingMenu(),
             ),
-            SliverList(
-              delegate: SliverChildListDelegate(
-                [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: ButtonWrapper(
-                      onTap: () {
-                        animationController.forward();
-                        context.push(ScreenPaths.details);
+            SliverPadding(
+              padding: EdgeInsets.all(20),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final item = items.value[index];
+                    return Dismissible(
+                      direction: DismissDirection.endToStart,
+                      key: Key(item.keys.first),
+                      onDismissed: (direction) {
+                        items.value = List.from(items.value)..removeAt(index);
                       },
-                      child: Container(
+                      background: Container(
                         decoration: BoxDecoration(
-                            color: AppColors.darkBackgroundGray,
-                            borderRadius: BorderRadius.circular(12)),
-                        height: 60,
-                        child: Text(AppLocalizations.of(context).system),
+                          borderRadius:
+                              _getBorderRadius(index, items.value.length),
+                          color: Colors.red,
+                        ),
+                        child: const Align(
+                          alignment: Alignment.centerRight,
+                          child: Padding(
+                            padding: EdgeInsets.only(right: 28),
+                            child: Icon(
+                              AppIcons.trash,
+                              color: AppColors.white,
+                              size: 22,
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  const Gap(16),
-                ],
+                      child: DismissibleCard(
+                        item: item,
+                        index: index,
+                        length: items.value.length,
+                      ),
+                    );
+                  },
+                  childCount: items.value.length,
+                ),
               ),
             ),
           ],
         ),
         Positioned(
           bottom: 110,
-          right: 120,
+          right: 70,
           child: ButtonWrapper(
             onTap: () {
               animationController.forward();
@@ -98,4 +119,74 @@ class ListChatScreen extends HookWidget {
         )
         .fadeOut();
   }
+}
+
+class DismissibleCard extends StatelessWidget {
+  const DismissibleCard({
+    super.key,
+    required this.item,
+    required this.index,
+    required this.length,
+  });
+
+  final Map<String, DateTime> item;
+  final int index;
+  final int length;
+
+  @override
+  Widget build(BuildContext context) {
+    bool isNotLastItem = index != length - 1;
+
+    return Container(
+      padding: const EdgeInsets.only(
+        left: 24,
+        bottom: 12,
+        top: 12,
+      ),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1C1C1E),
+        borderRadius: _getBorderRadius(index, length),
+        border: isNotLastItem
+            ? const Border(
+                bottom:
+                    BorderSide(color: AppColors.secondarySystemFill, width: 1),
+              )
+            : null,
+      ),
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(item.keys.first, style: const TextStyle(height: 1)),
+          const Gap(4),
+          Text(
+            DateFormat.yMEd().format(item.values.first),
+            style: const TextStyle(
+              color: AppColors.systemGrey2,
+              height: 1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+BorderRadius? _getBorderRadius(int index, int length) {
+  if (index == 0 && index == length - 1) {
+    return const BorderRadius.all(Radius.circular(12));
+  }
+  if (index == 0) {
+    return const BorderRadius.only(
+      topLeft: Radius.circular(12),
+      topRight: Radius.circular(12),
+    );
+  }
+  if (index == length - 1) {
+    return const BorderRadius.only(
+      bottomLeft: Radius.circular(12),
+      bottomRight: Radius.circular(12),
+    );
+  }
+  return null;
 }
