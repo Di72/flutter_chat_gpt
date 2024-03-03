@@ -9,6 +9,7 @@ class RivePaths {
   static String root = 'assets/rive';
   static String common = '$root/_common';
   static String gptLogo = '$common/gpt_logo.riv';
+  static String background = '$common/background.riv';
 }
 
 class AppIcons {

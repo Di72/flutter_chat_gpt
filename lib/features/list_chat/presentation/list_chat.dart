@@ -24,11 +24,6 @@ class ListChatScreen extends HookWidget {
               backgroundColor: CupertinoTheme.of(context)
                   .scaffoldBackgroundColor
                   .withOpacity(0.2),
-              leading: const Icon(
-                AppIcons.back,
-                color: AppColors.activeGreen,
-                size: 22,
-              ),
               largeTitle: Text(AppLocalizations.of(context).notes),
               trailing: const CascadingMenu(),
             ),

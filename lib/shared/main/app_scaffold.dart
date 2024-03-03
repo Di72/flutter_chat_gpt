@@ -26,7 +26,7 @@ class ChatGptAppScaffold extends ConsumerWidget {
           resizeToAvoidBottomInset: true,
           child: Stack(
             children: [
-              RiveAnimation.asset(RivePaths.gptLogo),
+              RiveAnimation.asset(RivePaths.background, fit: BoxFit.fill),
               Positioned.fill(
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
