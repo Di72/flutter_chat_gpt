@@ -2,14 +2,12 @@ import 'package:flutter/cupertino.dart';
 
 class ImagePaths {
   static String root = 'assets/images';
-  static String common = '$root/_common';
 }
 
 class RivePaths {
   static String root = 'assets/rive';
-  static String common = '$root/_common';
-  static String gptLogo = '$common/gpt_logo.riv';
-  static String background = '$common/background.riv';
+  static String gptLogo = '$root/gpt_logo.riv';
+  static String background = '$root/background.riv';
 }
 
 class AppIcons {
@@ -19,5 +17,5 @@ class AppIcons {
   static const IconData circleLefthalfFill =
       CupertinoIcons.circle_lefthalf_fill;
   static const IconData ellipsisCircle = CupertinoIcons.ellipsis_circle;
-  static const IconData trash = CupertinoIcons.trash;
+  static const IconData trash_fill = CupertinoIcons.trash_fill;
 }
