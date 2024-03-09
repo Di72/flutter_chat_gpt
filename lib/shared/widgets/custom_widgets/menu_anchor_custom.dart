@@ -1,7 +1,3 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
@@ -9,32 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 
-// Examples can assume:
-// bool _throwShotAway = false;
-// late BuildContext context;
-// enum SingingCharacter { lafayette }
-// late SingingCharacter? _character;
-// late StateSetter setState;
+// This is a custom implementation of the MenuAnchor widget. icon.arrow_right icon has been removed. 2102 line
 
-// Enable if you want verbose logging about menu changes.
 const bool _kDebugMenus = false;
 
-// The default size of the arrow in _MenuItemLabel that indicates that a menu
-// has a submenu.
-const double _kDefaultSubmenuIconSize = 24;
-
-// The default spacing between the leading icon, label, trailing icon, and
-// shortcut label in a _MenuItemLabel.
 const double _kLabelItemDefaultSpacing = 12;
 
-// The minimum spacing between the leading icon, label, trailing icon, and
-// shortcut label in a _MenuItemLabel.
 const double _kLabelItemMinSpacing = 4;
 
-// Navigation shortcuts that we need to make sure are active when menus are
-// open.
 const Map<ShortcutActivator, Intent> _kMenuTraversalShortcuts =
     <ShortcutActivator, Intent>{
   SingleActivator(LogicalKeyboardKey.gameButtonA): ActivateIntent(),
@@ -51,62 +30,19 @@ const Map<ShortcutActivator, Intent> _kMenuTraversalShortcuts =
       DirectionalFocusIntent(TraversalDirection.right),
 };
 
-// The minimum vertical spacing on the outside of menus.
 const double _kMenuVerticalMinPadding = 8;
 
-// How close to the edge of the safe area the menu will be placed.
 const double _kMenuViewPadding = 8;
 
-// The minimum horizontal spacing on the outside of the top level menu.
 const double _kTopLevelMenuHorizontalMinPadding = 4;
 
-/// The type of builder function used by [MenuAnchor.builder] to build the
-/// widget that the [MenuAnchor] surrounds.
-///
-/// The `context` is the context that the widget is being built in.
-///
-/// The `controller` is the [MenuController] that can be used to open and close
-/// the menu with.
-///
-/// The `child` is an optional child supplied as the [MenuAnchor.child]
-/// attribute. The child is intended to be incorporated in the result of the
-/// function.
 typedef MenuAnchorCustomChildBuilder = Widget Function(
   BuildContext context,
   MenuController controller,
   Widget? child,
 );
 
-/// A widget used to mark the "anchor" for a set of submenus, defining the
-/// rectangle used to position the menu, which can be done either with an
-/// explicit location, or with an alignment.
-///
-/// When creating a menu with [MenuBar] or a [SubmenuButton], a [MenuAnchor] is
-/// not needed, since they provide their own internally.
-///
-/// The [MenuAnchor] is meant to be a slightly lower level interface than
-/// [MenuBar], used in situations where a [MenuBar] isn't appropriate, or to
-/// construct widgets or screen regions that have submenus.
-///
-/// {@tool dartpad}
-/// This example shows how to use a [MenuAnchor] to wrap a button and open a
-/// cascading menu from the button.
-///
-/// ** See code in examples/api/lib/material/menu_anchor/menu_anchor.0.dart **
-/// {@end-tool}
-///
-/// {@tool dartpad}
-/// This example shows how to use a [MenuAnchor] to create a cascading context
-/// menu in a region of the view, positioned where the user clicks the mouse
-/// with Ctrl pressed. The [anchorTapClosesMenu] attribute is set to true so
-/// that clicks on the [MenuAnchor] area will cause the menus to be closed.
-///
-/// ** See code in examples/api/lib/material/menu_anchor/menu_anchor.1.dart **
-/// {@end-tool}
 class MenuAnchor extends StatefulWidget {
-  /// Creates a const [MenuAnchor].
-  ///
-  /// The [menuChildren] argument is required.
   const MenuAnchor({
     super.key,
     this.controller,
@@ -123,112 +59,28 @@ class MenuAnchor extends StatefulWidget {
     this.child,
   });
 
-  /// An optional controller that allows opening and closing of the menu from
-  /// other widgets.
   final MenuController? controller;
 
-  /// The [childFocusNode] attribute is the optional [FocusNode] also associated
-  /// the [child] or [builder] widget that opens the menu.
-  ///
-  /// The focus node should be attached to the widget that should receive focus
-  /// if keyboard focus traversal moves the focus off of the submenu with the
-  /// arrow keys.
-  ///
-  /// If not supplied, then keyboard traversal from the menu back to the
-  /// controlling button when the menu is open is disabled.
   final FocusNode? childFocusNode;
 
-  /// The [MenuStyle] that defines the visual attributes of the menu bar.
-  ///
-  /// Colors and sizing of the menus is controllable via the [MenuStyle].
-  ///
-  /// Defaults to the ambient [MenuThemeData.style].
   final MenuStyle? style;
 
-  /// The offset of the menu relative to the alignment origin determined by
-  /// [MenuStyle.alignment] on the [style] attribute and the ambient
-  /// [Directionality].
-  ///
-  /// Use this for adjustments of the menu placement.
-  ///
-  /// Increasing [Offset.dy] values of [alignmentOffset] move the menu position
-  /// down.
-  ///
-  /// If the [MenuStyle.alignment] from [style] is not an [AlignmentDirectional]
-  /// (e.g. [Alignment]), then increasing [Offset.dx] values of
-  /// [alignmentOffset] move the menu position to the right.
-  ///
-  /// If the [MenuStyle.alignment] from [style] is an [AlignmentDirectional],
-  /// then in a [TextDirection.ltr] [Directionality], increasing [Offset.dx]
-  /// values of [alignmentOffset] move the menu position to the right. In a
-  /// [TextDirection.rtl] directionality, increasing [Offset.dx] values of
-  /// [alignmentOffset] move the menu position to the left.
-  ///
-  /// Defaults to [Offset.zero].
   final Offset? alignmentOffset;
 
-  /// {@macro flutter.material.Material.clipBehavior}
-  ///
-  /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;
 
-  /// Whether the menus will be closed if the anchor area is tapped.
-  ///
-  /// For menus opened by buttons that toggle the menu, if the button is tapped
-  /// when the menu is open, the button should close the menu. But if
-  /// [anchorTapClosesMenu] is true, then the menu will close, and
-  /// (surprisingly) immediately re-open. This is because tapping on the button
-  /// closes the menu before the `onPressed` or `onTap` handler is called
-  /// because of it being considered to be "outside" the menu system, and then
-  /// the button (seeing that the menu is closed) immediately reopens the menu.
-  /// The result is that the user thinks that tapping on the button does
-  /// nothing. So, for button-initiated menus, this value is typically false so
-  /// that the menu anchor area is considered "inside" of the menu system and
-  /// doesn't cause it to close unless [MenuController.close] is called.
-  ///
-  /// For menus that are positioned using [MenuController.open]'s `position`
-  /// parameter, it is often desirable that clicking on the anchor always closes
-  /// the menu since the anchor area isn't usually considered part of the menu
-  /// system by the user. In this case [anchorTapClosesMenu] should be true.
-  ///
-  /// Defaults to false.
   final bool anchorTapClosesMenu;
 
-  /// A callback that is invoked when the menu is opened.
   final VoidCallback? onOpen;
 
-  /// A callback that is invoked when the menu is closed.
   final VoidCallback? onClose;
 
-  /// Determine if the menu panel can be wrapped by a [UnconstrainedBox] which allows
-  /// the panel to render at its "natural" size.
-  ///
-  /// Defaults to true as it allows developers to render the menu panel at the
-  /// size it should be. When it is set to false, it can be useful when the menu should
-  /// be constrained in both main axis and cross axis, such as a [DropdownMenu].
   final bool crossAxisUnconstrained;
 
-  /// A list of children containing the menu items that are the contents of the
-  /// menu surrounded by this [MenuAnchor].
-  ///
-  /// {@macro flutter.material.MenuBar.shortcuts_note}
   final List<Widget> menuChildren;
 
-  /// The widget that this [MenuAnchor] surrounds.
-  ///
-  /// Typically this is a button used to open the menu by calling
-  /// [MenuController.open] on the `controller` passed to the builder.
-  ///
-  /// If not supplied, then the [MenuAnchor] will be the size that its parent
-  /// allocates for it.
   final MenuAnchorCustomChildBuilder? builder;
 
-  /// The optional child to be passed to the [builder].
-  ///
-  /// Supply this child if there is a portion of the widget tree built in
-  /// [builder] that doesn't depend on the `controller` or `context` supplied to
-  /// the [builder]. It will be more efficient, since Flutter doesn't then need
-  /// to rebuild this child when those change.
   final Widget? child;
 
   @override
@@ -257,10 +109,6 @@ class MenuAnchor extends StatefulWidget {
 }
 
 class _MenuAnchorCustomState extends State<MenuAnchor> {
-  // This is the global key that is used later to determine the bounding rect
-  // for the anchor's region that the CustomSingleChildLayout's delegate
-  // uses to determine where to place the menu on the screen and to avoid the
-  // view's edges.
   final GlobalKey _anchorKey =
       GlobalKey(debugLabel: kReleaseMode ? null : 'MenuAnchor');
   _MenuAnchorCustomState? _parent;
@@ -313,7 +161,6 @@ class _MenuAnchorCustomState extends State<MenuAnchor> {
     _position?.isScrollingNotifier.addListener(_handleScroll);
     final Size newSize = MediaQuery.sizeOf(context);
     if (_viewSize != null && newSize != _viewSize) {
-      // Close the menus if the view changes size.
       _root._close();
     }
     _viewSize = newSize;
@@ -335,8 +182,6 @@ class _MenuAnchorCustomState extends State<MenuAnchor> {
     }
     assert(_menuController._anchor == this);
     if (_overlayEntry != null) {
-      // Needs to update the overlay entry on the next frame, since it's in the
-      // overlay.
       SchedulerBinding.instance.addPostFrameCallback((Duration _) {
         _overlayEntry?.markNeedsBuild();
       });
@@ -382,8 +227,6 @@ class _MenuAnchorCustomState extends State<MenuAnchor> {
     );
   }
 
-  // Returns the first focusable item in the submenu, where "first" is
-  // determined by the focus traversal policy.
   FocusNode? get _firstItemFocusNode {
     if (_menuScopeNode.context == null) {
       return null;
@@ -445,9 +288,7 @@ class _MenuAnchorCustomState extends State<MenuAnchor> {
   void _childChangedOpenState() {
     if (mounted) {
       _parent?._childChangedOpenState();
-      setState(() {
-        // Mark dirty, but only if mounted.
-      });
+      setState(() {});
     }
   }
 
@@ -460,22 +301,11 @@ class _MenuAnchorCustomState extends State<MenuAnchor> {
   }
 
   void _handleScroll() {
-    // If an ancestor scrolls, and we're a root anchor, then close the menus.
-    // Don't just close it on *any* scroll, since we want to be able to scroll
-    // menus themselves if they're too big for the view.
     if (_isRoot) {
       _root._close();
     }
   }
 
-  /// Open the menu, optionally at a position relative to the [MenuAnchor].
-  ///
-  /// Call this when the menu should be shown to the user.
-  ///
-  /// The optional `position` argument will specify the location of the menu in
-  /// the local coordinates of the [MenuAnchor], ignoring any
-  /// [MenuStyle.alignment] and/or [MenuAnchor.alignmentOffset] that were
-  /// specified.
   void _open({Offset? position}) {
     assert(_menuController._anchor == this);
     if (_isOpen && position == null) {
@@ -483,13 +313,11 @@ class _MenuAnchorCustomState extends State<MenuAnchor> {
       return;
     }
     if (_isOpen && position != null) {
-      // The menu is already open, but we need to move to another location, so
-      // close it first.
       _close();
     }
     assert(_debugMenuInfo(
         'Opening $this at ${position ?? Offset.zero} with alignment offset ${widget.alignmentOffset ?? Offset.zero}'));
-    _parent?._closeChildren(); // Close all siblings.
+    _parent?._closeChildren();
     assert(_overlayEntry == null);
 
     final BuildContext outerContext = context;
@@ -505,13 +333,8 @@ class _MenuAnchorCustomState extends State<MenuAnchor> {
             child: Directionality(
               textDirection: Directionality.of(outerContext),
               child: InheritedTheme.captureAll(
-                // Copy all the themes from the supplied outer context to the
-                // overlay.
                 outerContext,
                 _MenuAnchorCustomScope(
-                  // Re-advertize the anchor here in the overlay, since
-                  // otherwise a search for the anchor by descendants won't find
-                  // it.
                   anchorKey: _anchorKey,
                   anchor: this,
                   isOpen: _isOpen,
@@ -537,10 +360,6 @@ class _MenuAnchorCustomState extends State<MenuAnchor> {
     widget.onOpen?.call();
   }
 
-  /// Close the menu.
-  ///
-  /// Call this when the menu should be closed. Has no effect if the menu is
-  /// already closed.
   void _close({bool inDispose = false}) {
     assert(_debugMenuInfo('Closing $this'));
     if (!_isOpen) {
@@ -551,8 +370,6 @@ class _MenuAnchorCustomState extends State<MenuAnchor> {
     _overlayEntry?.dispose();
     _overlayEntry = null;
     if (!inDispose) {
-      // Notify that _childIsOpen changed state, but only if not
-      // currently disposing.
       _parent?._childChangedOpenState();
       widget.onClose?.call();
       setState(() {});
@@ -568,9 +385,6 @@ class _MenuAnchorCustomState extends State<MenuAnchor> {
     }
   }
 
-  // Returns the active anchor in the given context, if any, and creates a
-  // dependency relationship that will rebuild the context when the node
-  // changes.
   static _MenuAnchorCustomState? _maybeOf(BuildContext context) {
     return context
         .dependOnInheritedWidgetOfExactType<_MenuAnchorCustomScope>()
@@ -578,62 +392,24 @@ class _MenuAnchorCustomState extends State<MenuAnchor> {
   }
 }
 
-/// A controller to manage a menu created by a [MenuBar] or [MenuAnchor].
-///
-/// A [MenuController] is used to control and interrogate a menu after it has
-/// been created, with methods such as [open] and [close], and state accessors
-/// like [isOpen].
-///
-/// See also:
-///
-/// * [MenuAnchor], a widget that defines a region that has submenu.
-/// * [MenuBar], a widget that creates a menu bar, that can take an optional
-///   [MenuController].
-/// * [SubmenuButton], a widget that has a button that manages a submenu.
 class MenuController {
-  /// The anchor that this controller controls.
-  ///
-  /// This is set automatically when a [MenuController] is given to the anchor
-  /// it controls.
   _MenuAnchorCustomState? _anchor;
 
-  /// Whether or not the associated menu is currently open.
   bool get isOpen {
     assert(_anchor != null);
     return _anchor!._isOpen;
   }
 
-  /// Close the menu that this menu controller is associated with.
-  ///
-  /// Associating with a menu is done by passing a [MenuController] to a
-  /// [MenuAnchor]. A [MenuController] is also be received by the
-  /// [MenuAnchor.builder] when invoked.
-  ///
-  /// If the menu's anchor point (either a [MenuBar] or a [MenuAnchor]) is
-  /// scrolled by an ancestor, or the view changes size, then any open menu will
-  /// automatically close.
   void close() {
     assert(_anchor != null);
     _anchor!._close();
   }
 
-  /// Opens the menu that this menu controller is associated with.
-  ///
-  /// If `position` is given, then the menu will open at the position given, in
-  /// the coordinate space of the [MenuAnchor] this controller is attached to.
-  ///
-  /// If given, the `position` will override the [MenuAnchor.alignmentOffset]
-  /// given to the [MenuAnchor].
-  ///
-  /// If the menu's anchor point (either a [MenuBar] or a [MenuAnchor]) is
-  /// scrolled by an ancestor, or the view changes size, then any open menu will
-  /// automatically close.
   void open({Offset? position}) {
     assert(_anchor != null);
     _anchor!._open(position: position);
   }
 
-  // ignore: use_setters_to_change_properties
   void _attach(_MenuAnchorCustomState anchor) {
     _anchor = anchor;
   }
@@ -645,72 +421,7 @@ class MenuController {
   }
 }
 
-/// A menu bar that manages cascading child menus.
-///
-/// This is a Material Design menu bar that typically resides above the main
-/// body of an application (but can go anywhere) that defines a menu system for
-/// invoking callbacks in response to user selection of a menu item.
-///
-/// The menus can be opened with a click or tap. Once a menu is opened, it can
-/// be navigated by using the arrow and tab keys or via mouse hover. Selecting a
-/// menu item can be done by pressing enter, or by clicking or tapping on the
-/// menu item. Clicking or tapping on any part of the user interface that isn't
-/// part of the menu system controlled by the same controller will cause all of
-/// the menus controlled by that controller to close, as will pressing the
-/// escape key.
-///
-/// When a menu item with a submenu is clicked on, it toggles the visibility of
-/// the submenu. When the menu item is hovered over, the submenu will open, and
-/// hovering over other items will close the previous menu and open the newly
-/// hovered one. When those open/close transitions occur,
-/// [SubmenuButton.onOpen], and [SubmenuButton.onClose] are called on the
-/// corresponding [SubmenuButton] child of the menu bar.
-///
-/// {@template flutter.material.MenuBar.shortcuts_note}
-/// Menus using [MenuItemButton] can have a [SingleActivator] or
-/// [CharacterActivator] assigned to them as their [MenuItemButton.shortcut],
-/// which will display an appropriate shortcut hint. Even though the shortcut
-/// labels are displayed in the menu, shortcuts are not automatically handled.
-/// They must be available in whatever context they are appropriate, and handled
-/// via another mechanism.
-///
-/// If shortcuts should be generally enabled, but are not easily defined in a
-/// context surrounding the menu bar, consider registering them with a
-/// [ShortcutRegistry] (one is already included in the [WidgetsApp], and thus
-/// also [MaterialApp] and [CupertinoApp]), as shown in the example below. To be
-/// sure that selecting a menu item and triggering the shortcut do the same
-/// thing, it is recommended that they call the same callback.
-///
-/// {@tool dartpad} This example shows a [MenuBar] that contains a single top
-/// level menu, containing three items: "About", a checkbox menu item for
-/// showing a message, and "Quit". The items are identified with an enum value,
-/// and the shortcuts are registered globally with the [ShortcutRegistry].
-///
-/// ** See code in examples/api/lib/material/menu_anchor/menu_bar.0.dart **
-/// {@end-tool}
-/// {@endtemplate}
-///
-/// {@macro flutter.material.MenuAcceleratorLabel.accelerator_sample}
-///
-/// See also:
-///
-/// * [MenuAnchor], a widget that creates a region with a submenu and shows it
-///   when requested.
-/// * [SubmenuButton], a menu item which manages a submenu.
-/// * [MenuItemButton], a leaf menu item which displays the label, an optional
-///   shortcut label, and optional leading and trailing icons.
-/// * [PlatformMenuBar], which creates a menu bar that is rendered by the host
-///   platform instead of by Flutter (on macOS, for example).
-/// * [ShortcutRegistry], a registry of shortcuts that apply for the entire
-///   application.
-/// * [VoidCallbackIntent], to define intents that will call a [VoidCallback] and
-///   work with the [Actions] and [Shortcuts] system.
-/// * [CallbackShortcuts], to define shortcuts that call a callback without
-///   involving [Actions].
 class MenuBar extends StatelessWidget {
-  /// Creates a const [MenuBar].
-  ///
-  /// The [children] argument is required.
   const MenuBar({
     super.key,
     this.style,
@@ -719,29 +430,12 @@ class MenuBar extends StatelessWidget {
     required this.children,
   });
 
-  /// The [MenuStyle] that defines the visual attributes of the menu bar.
-  ///
-  /// Colors and sizing of the menus is controllable via the [MenuStyle].
-  ///
-  /// Defaults to the ambient [MenuThemeData.style].
   final MenuStyle? style;
 
-  /// {@macro flutter.material.Material.clipBehavior}
-  ///
-  /// Defaults to [Clip.none].
   final Clip clipBehavior;
 
-  /// The [MenuController] to use for this menu bar.
   final MenuController? controller;
 
-  /// The list of menu items that are the top level children of the [MenuBar].
-  ///
-  /// A Widget in Flutter is immutable, so directly modifying the [children]
-  /// with [List] APIs such as `someMenuBarWidget.menus.add(...)` will result in
-  /// incorrect behaviors. Whenever the menus list is modified, a new list
-  /// object must be provided.
-  ///
-  /// {@macro flutter.material.MenuBar.shortcuts_note}
   final List<Widget> children;
 
   @override
@@ -774,34 +468,7 @@ class MenuBar extends StatelessWidget {
   }
 }
 
-/// A button for use in a [MenuBar], in a menu created with [MenuAnchor], or on
-/// its own, that can be activated by click or keyboard navigation.
-///
-/// This widget represents a leaf entry in a menu hierarchy that is typically
-/// part of a [MenuBar], but may be used independently, or as part of a menu
-/// created with a [MenuAnchor].
-///
-/// {@macro flutter.material.MenuBar.shortcuts_note}
-///
-/// See also:
-///
-/// * [MenuBar], a class that creates a top level menu bar in a Material Design
-///   style.
-/// * [MenuAnchor], a widget that creates a region with a submenu and shows it
-///   when requested.
-/// * [SubmenuButton], a menu item similar to this one which manages a submenu.
-/// * [PlatformMenuBar], which creates a menu bar that is rendered by the host
-///   platform instead of by Flutter (on macOS, for example).
-/// * [ShortcutRegistry], a registry of shortcuts that apply for the entire
-///   application.
-/// * [VoidCallbackIntent], to define intents that will call a [VoidCallback] and
-///   work with the [Actions] and [Shortcuts] system.
-/// * [CallbackShortcuts] to define shortcuts that call a callback without
-///   involving [Actions].
 class MenuItemButton extends StatefulWidget {
-  /// Creates a const [MenuItemButton].
-  ///
-  /// The [child] attribute is required.
   const MenuItemButton({
     super.key,
     this.onPressed,
@@ -819,133 +486,45 @@ class MenuItemButton extends StatefulWidget {
     required this.child,
   });
 
-  /// Called when the button is tapped or otherwise activated.
-  ///
-  /// If this callback is null, then the button will be disabled.
-  ///
-  /// See also:
-  ///
-  ///  * [enabled], which is true if the button is enabled.
   final VoidCallback? onPressed;
 
-  /// Called when a pointer enters or exits the button response area.
-  ///
-  /// The value passed to the callback is true if a pointer has entered button
-  /// area and false if a pointer has exited.
   final ValueChanged<bool>? onHover;
 
-  /// Determine if hovering can request focus.
-  ///
-  /// Defaults to true.
   final bool requestFocusOnHover;
 
-  /// Handler called when the focus changes.
-  ///
-  /// Called with true if this widget's node gains focus, and false if it loses
-  /// focus.
   final ValueChanged<bool>? onFocusChange;
 
-  /// {@macro flutter.widgets.Focus.focusNode}
   final FocusNode? focusNode;
 
-  /// The optional shortcut that selects this [MenuItemButton].
-  ///
-  /// {@macro flutter.material.MenuBar.shortcuts_note}
   final MenuSerializableShortcut? shortcut;
 
-  /// Customizes this button's appearance.
-  ///
-  /// Non-null properties of this style override the corresponding properties in
-  /// [themeStyleOf] and [defaultStyleOf]. [MaterialStateProperty]s that resolve
-  /// to non-null values will similarly override the corresponding
-  /// [MaterialStateProperty]s in [themeStyleOf] and [defaultStyleOf].
-  ///
-  /// Null by default.
   final ButtonStyle? style;
 
-  /// {@macro flutter.material.inkwell.statesController}
   final MaterialStatesController? statesController;
 
-  /// {@macro flutter.material.Material.clipBehavior}
-  ///
-  /// Defaults to [Clip.none].
   final Clip clipBehavior;
 
-  /// An optional icon to display before the [child] label.
   final Widget? leadingIcon;
 
-  /// An optional icon to display after the [child] label.
   final Widget? trailingIcon;
 
-  /// {@template flutter.material.menu_anchor.closeOnActivate}
-  /// Determines if the menu will be closed when a [MenuItemButton]
-  /// is pressed.
-  ///
-  /// Defaults to true.
-  /// {@endtemplate}
   final bool closeOnActivate;
 
-  /// The widget displayed in the center of this button.
-  ///
-  /// Typically this is the button's label, using a [Text] widget.
-  ///
-  /// {@macro flutter.widgets.ProxyWidget.child}
   final Widget? child;
 
-  /// Whether the button is enabled or disabled.
-  ///
-  /// To enable a button, set its [onPressed] property to a non-null value.
   bool get enabled => onPressed != null;
 
   @override
   State<MenuItemButton> createState() => _MenuItemButtonState();
 
-  /// Defines the button's default appearance.
-  ///
-  /// {@macro flutter.material.text_button.default_style_of}
-  ///
-  /// {@macro flutter.material.text_button.material3_defaults}
   ButtonStyle defaultStyleOf(BuildContext context) {
     return _MenuButtonDefaultsM3(context);
   }
 
-  /// Returns the [MenuButtonThemeData.style] of the closest
-  /// [MenuButtonTheme] ancestor.
   ButtonStyle? themeStyleOf(BuildContext context) {
     return MenuButtonTheme.of(context).style;
   }
 
-  /// A static convenience method that constructs a [MenuItemButton]'s
-  /// [ButtonStyle] given simple values.
-  ///
-  /// The [foregroundColor] color is used to create a [MaterialStateProperty]
-  /// [ButtonStyle.foregroundColor] value. Specify a value for [foregroundColor]
-  /// to specify the color of the button's icons. Use [backgroundColor] for the
-  /// button's background fill color. Use [disabledForegroundColor] and
-  /// [disabledBackgroundColor] to specify the button's disabled icon and fill
-  /// color.
-  ///
-  /// All of the other parameters are either used directly or used to create a
-  /// [MaterialStateProperty] with a single value for all states.
-  ///
-  /// All parameters default to null, by default this method returns a
-  /// [ButtonStyle] that doesn't override anything.
-  ///
-  /// For example, to override the default foreground color for a
-  /// [MenuItemButton], as well as its overlay color, with all of the standard
-  /// opacity adjustments for the pressed, focused, and hovered states, one
-  /// could write:
-  ///
-  /// ```dart
-  /// MenuItemButton(
-  ///   leadingIcon: const Icon(Icons.pets),
-  ///   style: MenuItemButton.styleFrom(foregroundColor: Colors.green),
-  ///   onPressed: () {
-  ///     // ...
-  ///   },
-  ///   child: const Text('Button Label'),
-  /// ),
-  /// ```
   static ButtonStyle styleFrom({
     Color? foregroundColor,
     Color? backgroundColor,
@@ -1024,7 +603,6 @@ class MenuItemButton extends StatefulWidget {
 }
 
 class _MenuItemButtonState extends State<MenuItemButton> {
-  // If a focus node isn't given to the widget, then we have to manage our own.
   FocusNode? _internalFocusNode;
   FocusNode get _focusNode => widget.focusNode ?? _internalFocusNode!;
 
@@ -1059,9 +637,6 @@ class _MenuItemButtonState extends State<MenuItemButton> {
 
   @override
   Widget build(BuildContext context) {
-    // Since we don't want to use the theme style or default style from the
-    // TextButton, we merge the styles, merging them in the right order when
-    // each type of style exists. Each "*StyleOf" function is only called once.
     ButtonStyle mergedStyle =
         widget.themeStyleOf(context)?.merge(widget.defaultStyleOf(context)) ??
             widget.defaultStyleOf(context);
@@ -1099,7 +674,6 @@ class _MenuItemButtonState extends State<MenuItemButton> {
 
   void _handleFocusChange() {
     if (!_focusNode.hasPrimaryFocus) {
-      // Close any child menus of this button's menu.
       _MenuAnchorCustomState._maybeOf(context)?._closeChildren();
     }
   }
@@ -1117,9 +691,7 @@ class _MenuItemButtonState extends State<MenuItemButton> {
     if (widget.closeOnActivate) {
       _MenuAnchorCustomState._maybeOf(context)?._root._close();
     }
-    // Delay the call to onPressed until post-frame so that the focus is
-    // restored to what it was before the menu was opened before the action is
-    // executed.
+
     SchedulerBinding.instance.addPostFrameCallback((Duration _) {
       FocusManager.instance.applyFocusChangesIfNeeded();
       widget.onPressed?.call();
@@ -1139,27 +711,7 @@ class _MenuItemButtonState extends State<MenuItemButton> {
   }
 }
 
-/// A menu item that combines a [Checkbox] widget with a [MenuItemButton].
-///
-/// To style the checkbox separately from the button, add a [CheckboxTheme]
-/// ancestor.
-///
-/// {@tool dartpad}
-/// This example shows a menu with a checkbox that shows a message in the body
-/// of the app if checked.
-///
-/// ** See code in examples/api/lib/material/menu_anchor/checkbox_menu_button.0.dart **
-/// {@end-tool}
-///
-/// See also:
-///
-/// - [MenuBar], a widget that creates a menu bar of cascading menu items.
-/// - [MenuAnchor], a widget that defines a region which can host a cascading
-///   menu.
 class CheckboxMenuButton extends StatelessWidget {
-  /// Creates a const [CheckboxMenuButton].
-  ///
-  /// The [child], [value], and [onChanged] attributes are required.
   const CheckboxMenuButton({
     super.key,
     required this.value,
@@ -1178,118 +730,34 @@ class CheckboxMenuButton extends StatelessWidget {
     required this.child,
   });
 
-  /// Whether this checkbox is checked.
-  ///
-  /// When [tristate] is true, a value of null corresponds to the mixed state.
-  /// When [tristate] is false, this value must not be null.
   final bool? value;
 
-  /// If true, then the checkbox's [value] can be true, false, or null.
-  ///
-  /// [CheckboxMenuButton] displays a dash when its value is null.
-  ///
-  /// When a tri-state checkbox ([tristate] is true) is tapped, its [onChanged]
-  /// callback will be applied to true if the current value is false, to null if
-  /// value is true, and to false if value is null (i.e. it cycles through false
-  /// => true => null => false when tapped).
-  ///
-  /// If tristate is false (the default), [value] must not be null.
   final bool tristate;
 
-  /// True if this checkbox wants to show an error state.
-  ///
-  /// The checkbox will have different default container color and check color when
-  /// this is true. This is only used when [ThemeData.useMaterial3] is set to true.
-  ///
-  /// Defaults to false.
   final bool isError;
 
-  /// Called when the value of the checkbox should change.
-  ///
-  /// The checkbox passes the new value to the callback but does not actually
-  /// change state until the parent widget rebuilds the checkbox with the new
-  /// value.
-  ///
-  /// If this callback is null, the menu item will be displayed as disabled
-  /// and will not respond to input gestures.
-  ///
-  /// When the checkbox is tapped, if [tristate] is false (the default) then the
-  /// [onChanged] callback will be applied to `!value`. If [tristate] is true
-  /// this callback cycle from false to true to null and then back to false
-  /// again.
-  ///
-  /// The callback provided to [onChanged] should update the state of the parent
-  /// [StatefulWidget] using the [State.setState] method, so that the parent
-  /// gets rebuilt; for example:
-  ///
-  /// ```dart
-  /// CheckboxMenuButton(
-  ///   value: _throwShotAway,
-  ///   child: const Text('THROW'),
-  ///   onChanged: (bool? newValue) {
-  ///     setState(() {
-  ///       _throwShotAway = newValue!;
-  ///     });
-  ///   },
-  /// )
-  /// ```
   final ValueChanged<bool?>? onChanged;
 
-  /// Called when a pointer enters or exits the button response area.
-  ///
-  /// The value passed to the callback is true if a pointer has entered button
-  /// area and false if a pointer has exited.
   final ValueChanged<bool>? onHover;
 
-  /// Handler called when the focus changes.
-  ///
-  /// Called with true if this widget's node gains focus, and false if it loses
-  /// focus.
   final ValueChanged<bool>? onFocusChange;
 
-  /// {@macro flutter.widgets.Focus.focusNode}
   final FocusNode? focusNode;
 
-  /// The optional shortcut that selects this [MenuItemButton].
-  ///
-  /// {@macro flutter.material.MenuBar.shortcuts_note}
   final MenuSerializableShortcut? shortcut;
 
-  /// Customizes this button's appearance.
-  ///
-  /// Non-null properties of this style override the corresponding properties in
-  /// [MenuItemButton.themeStyleOf] and [MenuItemButton.defaultStyleOf].
-  /// [MaterialStateProperty]s that resolve to non-null values will similarly
-  /// override the corresponding [MaterialStateProperty]s in
-  /// [MenuItemButton.themeStyleOf] and [MenuItemButton.defaultStyleOf].
-  ///
-  /// Null by default.
   final ButtonStyle? style;
 
-  /// {@macro flutter.material.inkwell.statesController}
   final MaterialStatesController? statesController;
 
-  /// {@macro flutter.material.Material.clipBehavior}
-  ///
-  /// Defaults to [Clip.none].
   final Clip clipBehavior;
 
-  /// An optional icon to display after the [child] label.
   final Widget? trailingIcon;
 
-  /// {@macro flutter.material.menu_anchor.closeOnActivate}
   final bool closeOnActivate;
 
-  /// The widget displayed in the center of this button.
-  ///
-  /// Typically this is the button's label, using a [Text] widget.
-  ///
-  /// {@macro flutter.widgets.ProxyWidget.child}
   final Widget? child;
 
-  /// Whether the button is enabled or disabled.
-  ///
-  /// To enable a button, set its [onChanged] property to a non-null value.
   bool get enabled => onChanged != null;
 
   @override
@@ -1338,27 +806,7 @@ class CheckboxMenuButton extends StatelessWidget {
   }
 }
 
-/// A menu item that combines a [Radio] widget with a [MenuItemButton].
-///
-/// To style the radio button separately from the overall button, add a
-/// [RadioTheme] ancestor.
-///
-/// {@tool dartpad}
-/// This example shows a menu with three radio buttons with shortcuts that
-/// changes the background color of the body when the buttons are selected.
-///
-/// ** See code in examples/api/lib/material/menu_anchor/radio_menu_button.0.dart **
-/// {@end-tool}
-///
-/// See also:
-///
-/// - [MenuBar], a widget that creates a menu bar of cascading menu items.
-/// - [MenuAnchor], a widget that defines a region which can host a cascading
-///   menu.
 class RadioMenuButton<T> extends StatelessWidget {
-  /// Creates a const [RadioMenuButton].
-  ///
-  /// The [child] attribute is required.
   const RadioMenuButton({
     super.key,
     required this.value,
@@ -1377,120 +825,34 @@ class RadioMenuButton<T> extends StatelessWidget {
     required this.child,
   });
 
-  /// The value represented by this radio button.
-  ///
-  /// This radio button is considered selected if its [value] matches the
-  /// [groupValue].
   final T value;
 
-  /// The currently selected value for a group of radio buttons.
-  ///
-  /// This radio button is considered selected if its [value] matches the
-  /// [groupValue].
   final T? groupValue;
 
-  /// Set to true if this radio button is allowed to be returned to an
-  /// indeterminate state by selecting it again when selected.
-  ///
-  /// To indicate returning to an indeterminate state, [onChanged] will be
-  /// called with null.
-  ///
-  /// If true, [onChanged] can be called with [value] when selected while
-  /// [groupValue] != [value], or with null when selected again while
-  /// [groupValue] == [value].
-  ///
-  /// If false, [onChanged] will be called with [value] when it is selected
-  /// while [groupValue] != [value], and only by selecting another radio button
-  /// in the group (i.e. changing the value of [groupValue]) can this radio
-  /// button be unselected.
-  ///
-  /// The default is false.
   final bool toggleable;
 
-  /// Called when the user selects this radio button.
-  ///
-  /// The radio button passes [value] as a parameter to this callback. The radio
-  /// button does not actually change state until the parent widget rebuilds the
-  /// radio button with the new [groupValue].
-  ///
-  /// If null, the radio button will be displayed as disabled.
-  ///
-  /// The provided callback will not be invoked if this radio button is already
-  /// selected.
-  ///
-  /// The callback provided to [onChanged] should update the state of the parent
-  /// [StatefulWidget] using the [State.setState] method, so that the parent
-  /// gets rebuilt; for example:
-  ///
-  /// ```dart
-  /// RadioMenuButton<SingingCharacter>(
-  ///   value: SingingCharacter.lafayette,
-  ///   groupValue: _character,
-  ///   onChanged: (SingingCharacter? newValue) {
-  ///     setState(() {
-  ///       _character = newValue;
-  ///     });
-  ///   },
-  ///   child: const Text('Lafayette'),
-  /// )
-  /// ```
   final ValueChanged<T?>? onChanged;
 
-  /// Called when a pointer enters or exits the button response area.
-  ///
-  /// The value passed to the callback is true if a pointer has entered button
-  /// area and false if a pointer has exited.
   final ValueChanged<bool>? onHover;
 
-  /// Handler called when the focus changes.
-  ///
-  /// Called with true if this widget's node gains focus, and false if it loses
-  /// focus.
   final ValueChanged<bool>? onFocusChange;
 
-  /// {@macro flutter.widgets.Focus.focusNode}
   final FocusNode? focusNode;
 
-  /// The optional shortcut that selects this [MenuItemButton].
-  ///
-  /// {@macro flutter.material.MenuBar.shortcuts_note}
   final MenuSerializableShortcut? shortcut;
 
-  /// Customizes this button's appearance.
-  ///
-  /// Non-null properties of this style override the corresponding properties in
-  /// [MenuItemButton.themeStyleOf] and [MenuItemButton.defaultStyleOf].
-  /// [MaterialStateProperty]s that resolve to non-null values will similarly
-  /// override the corresponding [MaterialStateProperty]s in
-  /// [MenuItemButton.themeStyleOf] and [MenuItemButton.defaultStyleOf].
-  ///
-  /// Null by default.
   final ButtonStyle? style;
 
-  /// {@macro flutter.material.inkwell.statesController}
   final MaterialStatesController? statesController;
 
-  /// {@macro flutter.material.Material.clipBehavior}
-  ///
-  /// Defaults to [Clip.none].
   final Clip clipBehavior;
 
-  /// An optional icon to display after the [child] label.
   final Widget? trailingIcon;
 
-  /// {@macro flutter.material.menu_anchor.closeOnActivate}
   final bool closeOnActivate;
 
-  /// The widget displayed in the center of this button.
-  ///
-  /// Typically this is the button's label, using a [Text] widget.
-  ///
-  /// {@macro flutter.widgets.ProxyWidget.child}
   final Widget? child;
 
-  /// Whether the button is enabled or disabled.
-  ///
-  /// To enable a button, set its [onChanged] property to a non-null value.
   bool get enabled => onChanged != null;
 
   @override
@@ -1536,39 +898,7 @@ class RadioMenuButton<T> extends StatelessWidget {
   }
 }
 
-/// A menu button that displays a cascading menu.
-///
-/// It can be used as part of a [MenuBar], or as a standalone widget.
-///
-/// This widget represents a menu item that has a submenu. Like the leaf
-/// [MenuItemButton], it shows a label with an optional leading or trailing
-/// icon, but additionally shows an arrow icon showing that it has a submenu.
-///
-/// By default the submenu will appear to the side of the controlling button.
-/// The alignment and offset of the submenu can be controlled by setting
-/// [MenuStyle.alignment] on the [style] and the [alignmentOffset] argument,
-/// respectively.
-///
-/// When activated (by being clicked, through keyboard navigation, or via
-/// hovering with a mouse), it will open a submenu containing the
-/// [menuChildren].
-///
-/// If [menuChildren] is empty, then this menu item will appear disabled.
-///
-/// See also:
-///
-/// * [MenuItemButton], a widget that represents a leaf menu item that does not
-///   host a submenu.
-/// * [MenuBar], a widget that renders menu items in a row in a Material Design
-///   style.
-/// * [MenuAnchor], a widget that creates a region with a submenu and shows it
-///   when requested.
-/// * [PlatformMenuBar], a widget that renders similar menu bar items from a
-///   [PlatformMenuItem] using platform-native APIs instead of Flutter.
 class SubmenuButton extends StatefulWidget {
-  /// Creates a const [SubmenuButton].
-  ///
-  /// The [child] and [menuChildren] attributes are required.
   const SubmenuButton({
     super.key,
     this.onHover,
@@ -1588,132 +918,47 @@ class SubmenuButton extends StatefulWidget {
     required this.child,
   });
 
-  /// Called when a pointer enters or exits the button response area.
-  ///
-  /// The value passed to the callback is true if a pointer has entered this
-  /// part of the button and false if a pointer has exited.
   final ValueChanged<bool>? onHover;
 
-  /// Handler called when the focus changes.
-  ///
-  /// Called with true if this widget's [focusNode] gains focus, and false if it
-  /// loses focus.
   final ValueChanged<bool>? onFocusChange;
 
-  /// A callback that is invoked when the menu is opened.
   final VoidCallback? onOpen;
 
-  /// A callback that is invoked when the menu is closed.
   final VoidCallback? onClose;
 
-  /// An optional [MenuController] for this submenu.
   final MenuController? controller;
 
-  /// Customizes this button's appearance.
-  ///
-  /// Non-null properties of this style override the corresponding properties in
-  /// [themeStyleOf] and [defaultStyleOf]. [MaterialStateProperty]s that resolve
-  /// to non-null values will similarly override the corresponding
-  /// [MaterialStateProperty]s in [themeStyleOf] and [defaultStyleOf].
-  ///
-  /// Null by default.
   final ButtonStyle? style;
 
-  /// The [MenuStyle] of the menu specified by [menuChildren].
-  ///
-  /// Defaults to the value of [MenuThemeData.style] of the ambient [MenuTheme].
   final MenuStyle? menuStyle;
 
-  /// The offset of the menu relative to the alignment origin determined by
-  /// [MenuStyle.alignment] on the [style] attribute.
-  ///
-  /// Use this for fine adjustments of the menu placement.
-  ///
-  /// Defaults to an offset that takes into account the padding of the menu so
-  /// that the top starting corner of the first menu item is aligned with the
-  /// top of the [MenuAnchor] region.
   final Offset? alignmentOffset;
 
-  /// {@macro flutter.material.Material.clipBehavior}
-  ///
-  /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;
 
-  /// {@macro flutter.widgets.Focus.focusNode}
   final FocusNode? focusNode;
 
-  /// {@macro flutter.material.inkwell.statesController}
   final MaterialStatesController? statesController;
 
-  /// An optional icon to display before the [child].
   final Widget? leadingIcon;
 
-  /// An optional icon to display after the [child].
   final Widget? trailingIcon;
 
-  /// The list of widgets that appear in the menu when it is opened.
-  ///
-  /// These can be any widget, but are typically either [MenuItemButton] or
-  /// [SubmenuButton] widgets.
-  ///
-  /// If [menuChildren] is empty, then the button for this menu item will be
-  /// disabled.
   final List<Widget> menuChildren;
 
-  /// The widget displayed in the middle portion of this button.
-  ///
-  /// Typically this is the button's label, using a [Text] widget.
-  ///
-  /// {@macro flutter.widgets.ProxyWidget.child}
   final Widget? child;
 
   @override
   State<SubmenuButton> createState() => _SubmenuButtonState();
 
-  /// Defines the button's default appearance.
-  ///
-  /// {@macro flutter.material.text_button.default_style_of}
-  ///
-  /// {@macro flutter.material.text_button.material3_defaults}
   ButtonStyle defaultStyleOf(BuildContext context) {
     return _MenuButtonDefaultsM3(context);
   }
 
-  /// Returns the [MenuButtonThemeData.style] of the closest [MenuButtonTheme]
-  /// ancestor.
   ButtonStyle? themeStyleOf(BuildContext context) {
     return MenuButtonTheme.of(context).style;
   }
 
-  /// A static convenience method that constructs a [SubmenuButton]'s
-  /// [ButtonStyle] given simple values.
-  ///
-  /// The [foregroundColor] color is used to create a [MaterialStateProperty]
-  /// [ButtonStyle.foregroundColor] value. Specify a value for [foregroundColor]
-  /// to specify the color of the button's icons. Use [backgroundColor] for the
-  /// button's background fill color. Use [disabledForegroundColor] and
-  /// [disabledBackgroundColor] to specify the button's disabled icon and fill
-  /// color.
-  ///
-  /// All of the other parameters are either used directly or used to create a
-  /// [MaterialStateProperty] with a single value for all states.
-  ///
-  /// All parameters default to null, by default this method returns a
-  /// [ButtonStyle] that doesn't override anything.
-  ///
-  /// For example, to override the default foreground color for a
-  /// [SubmenuButton], as well as its overlay color, with all of the standard
-  /// opacity adjustments for the pressed, focused, and hovered states, one
-  /// could write:
-  ///
-  /// ```dart
-  /// SubmenuButton(
-  ///   leadingIcon: const Icon(Icons.pets),
-  ///   style: SubmenuButton.styleFrom(foregroundColor: Colors.green),
-  ///   menuChildren: const <Widget>[ /* ... */ ],
-  ///   child: const Text('Button Label'),
-  /// ),
-  /// ```
   static ButtonStyle styleFrom({
     Color? foregroundColor,
     Color? backgroundColor,
@@ -1861,8 +1106,7 @@ class _SubmenuButtonState extends State<SubmenuButton> {
   Widget build(BuildContext context) {
     Offset menuPaddingOffset = widget.alignmentOffset ?? Offset.zero;
     final EdgeInsets menuPadding = _computeMenuPadding(context);
-    // Move the submenu over by the size of the menu padding, so that
-    // the first menu item aligns with the submenu button that opens it.
+
     switch (_anchor?._orientation ?? Axis.vertical) {
       case Axis.horizontal:
         switch (Directionality.of(context)) {
@@ -1894,10 +1138,6 @@ class _SubmenuButtonState extends State<SubmenuButton> {
       style: widget.menuStyle,
       builder:
           (BuildContext context, MenuController controller, Widget? child) {
-        // Since we don't want to use the theme style or default style from the
-        // TextButton, we merge the styles, merging them in the right order when
-        // each type of style exists. Each "*StyleOf" function is only called
-        // once.
         ButtonStyle mergedStyle = widget
                 .themeStyleOf(context)
                 ?.merge(widget.defaultStyleOf(context)) ??
@@ -1917,13 +1157,9 @@ class _SubmenuButtonState extends State<SubmenuButton> {
           }
         }
 
-        // Called when the pointer is hovering over the menu button.
         void handleHover(bool hovering, BuildContext context) {
           widget.onHover?.call(hovering);
-          // Don't open the root menu bar menus on hover unless something else
-          // is already open. This means that the user has to first click to
-          // open a menu on the menu bar before hovering allows them to traverse
-          // it.
+
           if (controller._anchor!._root._orientation == Axis.horizontal &&
               !controller._anchor!._root._isOpen) {
             return;
@@ -1997,18 +1233,9 @@ class _SubmenuButtonState extends State<SubmenuButton> {
   }
 }
 
-/// An action that closes all the menus associated with the given
-/// [MenuController].
-///
-/// See also:
-///
-///  * [MenuAnchor], a widget that hosts a cascading submenu.
-///  * [MenuBar], a widget that defines a menu bar with cascading submenus.
 class DismissMenuAction extends DismissAction {
-  /// Creates a [DismissMenuAction].
   DismissMenuAction({required this.controller});
 
-  /// The [MenuController] associated with the menus that should be closed.
   final MenuController controller;
 
   @override
@@ -2023,19 +1250,6 @@ class DismissMenuAction extends DismissAction {
   }
 }
 
-/// A helper class used to generate shortcut labels for a
-/// [MenuSerializableShortcut] (a subset of the subclasses of
-/// [ShortcutActivator]).
-///
-/// This helper class is typically used by the [MenuItemButton] and
-/// [SubmenuButton] classes to display a label for their assigned shortcuts.
-///
-/// Call [getShortcutLabel] with the [MenuSerializableShortcut] to get a label
-/// for it.
-///
-/// For instance, calling [getShortcutLabel] with `SingleActivator(trigger:
-/// LogicalKeyboardKey.keyA, control: true)` would return "⌃ A" on macOS, "Ctrl
-/// A" in an US English locale, and "Strg A" in a German locale.
 class _LocalizedShortcutLabeler {
   _LocalizedShortcutLabeler._();
 
@@ -2065,45 +1279,27 @@ class _LocalizedShortcutLabeler {
     LogicalKeyboardKey.shiftRight,
   };
 
-  /// Return the instance for this singleton.
   static _LocalizedShortcutLabeler get instance {
     return _instance ??= _LocalizedShortcutLabeler._();
   }
 
-  // Caches the created shortcut key maps so that creating one of these isn't
-  // expensive after the first time for each unique localizations object.
   final Map<MaterialLocalizations, Map<LogicalKeyboardKey, String>>
       _cachedShortcutKeys =
       <MaterialLocalizations, Map<LogicalKeyboardKey, String>>{};
 
-  /// Returns the label to be shown to the user in the UI when a
-  /// [MenuSerializableShortcut] is used as a keyboard shortcut.
-  ///
-  /// When [defaultTargetPlatform] is [TargetPlatform.macOS] or
-  /// [TargetPlatform.iOS], this will return graphical key representations when
-  /// it can. For instance, the default [LogicalKeyboardKey.shift] will return
-  /// '⇧', and the arrow keys will return arrows. The key
-  /// [LogicalKeyboardKey.meta] will show as '⌘', [LogicalKeyboardKey.control]
-  /// will show as '˄', and [LogicalKeyboardKey.alt] will show as '⌥'.
-  ///
-  /// The keys are joined by spaces on macOS and iOS, and by "+" on other
-  /// platforms.
   String getShortcutLabel(
       MenuSerializableShortcut shortcut, MaterialLocalizations localizations) {
     final ShortcutSerialization serialized = shortcut.serializeForMenu();
     final String keySeparator;
     if (_usesSymbolicModifiers) {
-      // Use "⌃ ⇧ A" style on macOS and iOS.
       keySeparator = ' ';
     } else {
-      // Use "Ctrl+Shift+A" style.
       keySeparator = '+';
     }
     if (serialized.trigger != null) {
       final List<String> modifiers = <String>[];
       final LogicalKeyboardKey trigger = serialized.trigger!;
       if (_usesSymbolicModifiers) {
-        // macOS/iOS platform convention uses this ordering, with ⌘ always last.
         if (serialized.control!) {
           modifiers.add(
               _getModifierLabel(LogicalKeyboardKey.control, localizations));
@@ -2121,7 +1317,6 @@ class _LocalizedShortcutLabeler {
               .add(_getModifierLabel(LogicalKeyboardKey.meta, localizations));
         }
       } else {
-        // These should be in this order, to match the LogicalKeySet version.
         if (serialized.alt!) {
           modifiers
               .add(_getModifierLabel(LogicalKeyboardKey.alt, localizations));
@@ -2144,18 +1339,14 @@ class _LocalizedShortcutLabeler {
       if (_shortcutGraphicEquivalents.containsKey(trigger)) {
         shortcutTrigger = _shortcutGraphicEquivalents[trigger];
       } else {
-        // Otherwise, look it up, and if we don't have a translation for it,
-        // then fall back to the key label.
         shortcutTrigger = _getLocalizedName(trigger, localizations);
         if (shortcutTrigger == null &&
             logicalKeyId & LogicalKeyboardKey.planeMask == 0x0) {
-          // If the trigger is a Unicode-character-producing key, then use the
-          // character.
           shortcutTrigger =
               String.fromCharCode(logicalKeyId & LogicalKeyboardKey.valueMask)
                   .toUpperCase();
         }
-        // Fall back to the key label if all else fails.
+
         shortcutTrigger ??= trigger.keyLabel;
       }
       return <String>[
@@ -2172,14 +1363,8 @@ class _LocalizedShortcutLabeler {
         'CharacterActivator) are not supported.');
   }
 
-  // Tries to look up the key in an internal table, and if it can't find it,
-  // then fall back to the key's keyLabel.
   String? _getLocalizedName(
       LogicalKeyboardKey key, MaterialLocalizations localizations) {
-    // Since this is an expensive table to build, we cache it based on the
-    // localization object. There's currently no way to clear the cache, but
-    // it's unlikely that more than one or two will be cached for each run, and
-    // they're not huge.
     _cachedShortcutKeys[localizations] ??= <LogicalKeyboardKey, String>{
       LogicalKeyboardKey.altGraph: localizations.keyboardKeyAltGraph,
       LogicalKeyboardKey.backspace: localizations.keyboardKeyBackspace,
@@ -2266,11 +1451,6 @@ class _LocalizedShortcutLabeler {
     if (modifier == LogicalKeyboardKey.control ||
         modifier == LogicalKeyboardKey.controlLeft ||
         modifier == LogicalKeyboardKey.controlRight) {
-      // '⎈' (a boat helm wheel, not an asterisk) is apparently the standard
-      // icon for "control", but only seems to appear on the French Canadian
-      // keyboard. A '✲' (an open center asterisk) appears on some Microsoft
-      // keyboards. For all but macOS (which has standardized on "⌃", it seems),
-      // we just return the local translation of "Ctrl".
       switch (defaultTargetPlatform) {
         case TargetPlatform.android:
         case TargetPlatform.fuchsia:
@@ -2320,8 +1500,6 @@ class _MenuAnchorCustomScope extends InheritedWidget {
   }
 }
 
-/// MenuBar-specific private specialization of [MenuAnchor] so that it can act
-/// differently in regards to orientation, how open works, and what gets built.
 class _MenuBarAnchor extends MenuAnchor {
   const _MenuBarAnchor({
     required super.menuChildren,
@@ -2337,7 +1515,6 @@ class _MenuBarAnchor extends MenuAnchor {
 class _MenuBarAnchorState extends _MenuAnchorCustomState {
   @override
   bool get _isOpen {
-    // If it's a bar, then it's "open" if any of its children are open.
     for (final _MenuAnchorCustomState child in _anchorChildren) {
       if (child._isOpen) {
         return true;
@@ -2381,13 +1558,12 @@ class _MenuBarAnchorState extends _MenuAnchorCustomState {
   @override
   void _open({Offset? position}) {
     assert(_menuController._anchor == this);
-    // Menu bars can't be opened, because they're already always open.
+
     return;
   }
 }
 
 class _MenuDirectionalFocusAction extends DirectionalFocusAction {
-  /// Creates a [DirectionalFocusAction].
   _MenuDirectionalFocusAction();
 
   @override
@@ -2534,9 +1710,7 @@ class _MenuDirectionalFocusAction extends DirectionalFocusAction {
 
   bool _moveToNext(_MenuAnchorCustomState currentMenu) {
     assert(_debugMenuInfo('Moving focus to next item in menu'));
-    // Need to invalidate the scope data because we're switching scopes, and
-    // otherwise the anti-hysteresis code will interfere with moving to the
-    // correct node.
+
     if (currentMenu.widget.childFocusNode != null) {
       final FocusTraversalPolicy? policy =
           FocusTraversalGroup.maybeOf(primaryFocus!.context!);
@@ -2552,7 +1726,6 @@ class _MenuDirectionalFocusAction extends DirectionalFocusAction {
   bool _moveToNextTopLevel(_MenuAnchorCustomState currentMenu) {
     final _MenuAnchorCustomState? sibling = currentMenu._topLevel._nextSibling;
     if (sibling == null) {
-      // Wrap around to the first top level.
       currentMenu._topLevel._parent!._anchorChildren.first._focusButton();
     } else {
       sibling._focusButton();
@@ -2570,9 +1743,7 @@ class _MenuDirectionalFocusAction extends DirectionalFocusAction {
 
   bool _moveToPrevious(_MenuAnchorCustomState currentMenu) {
     assert(_debugMenuInfo('Moving focus to previous item in menu'));
-    // Need to invalidate the scope data because we're switching scopes, and
-    // otherwise the anti-hysteresis code will interfere with moving to the
-    // correct node.
+
     if (currentMenu.widget.childFocusNode != null) {
       final FocusTraversalPolicy? policy =
           FocusTraversalGroup.maybeOf(primaryFocus!.context!);
@@ -2589,7 +1760,6 @@ class _MenuDirectionalFocusAction extends DirectionalFocusAction {
     final _MenuAnchorCustomState? sibling =
         currentMenu._topLevel._previousSibling;
     if (sibling == null) {
-      // Already on the first one, wrap around to the last one.
       currentMenu._topLevel._parent!._anchorChildren.last._focusButton();
     } else {
       sibling._focusButton();
@@ -2600,14 +1770,11 @@ class _MenuDirectionalFocusAction extends DirectionalFocusAction {
   bool _moveToSubmenu(_MenuAnchorCustomState currentMenu) {
     assert(_debugMenuInfo('Opening submenu'));
     if (!currentMenu._isOpen) {
-      // If no submenu is open, then an arrow opens the submenu.
       currentMenu._open();
       return true;
     } else {
       final FocusNode? firstNode = currentMenu._firstItemFocusNode;
       if (firstNode != null && firstNode.nearestScope != firstNode) {
-        // Don't request focus if the "first" found node is a focus scope, since
-        // that means that nothing else in the submenu is focusable.
         firstNode.requestFocus();
       }
       return true;
@@ -2615,16 +1782,7 @@ class _MenuDirectionalFocusAction extends DirectionalFocusAction {
   }
 }
 
-/// An [InheritedWidget] that provides a descendant [MenuAcceleratorLabel] with
-/// the function to invoke when the accelerator is pressed.
-///
-/// This is used when creating your own custom menu item for use with
-/// [MenuAnchor] or [MenuBar]. Provided menu items such as [MenuItemButton] and
-/// [SubmenuButton] already supply this wrapper internally.
 class MenuAcceleratorCallbackBinding extends InheritedWidget {
-  /// Create a const [MenuAcceleratorCallbackBinding].
-  ///
-  /// The [child] parameter is required.
   const MenuAcceleratorCallbackBinding({
     super.key,
     this.onInvoke,
@@ -2632,17 +1790,8 @@ class MenuAcceleratorCallbackBinding extends InheritedWidget {
     required super.child,
   });
 
-  /// The function that pressing the accelerator defined in a descendant
-  /// [MenuAcceleratorLabel] will invoke.
-  ///
-  /// If set to null, then the accelerator won't be enabled.
   final VoidCallback? onInvoke;
 
-  /// Whether or not the associated label will host its own submenu or not.
-  ///
-  /// This setting determines when accelerators are active, since accelerators
-  /// for menu items that open submenus shouldn't be active when the submenu is
-  /// open.
   final bool hasSubmenu;
 
   @override
@@ -2650,32 +1799,11 @@ class MenuAcceleratorCallbackBinding extends InheritedWidget {
     return onInvoke != oldWidget.onInvoke || hasSubmenu != oldWidget.hasSubmenu;
   }
 
-  /// Returns the active [MenuAcceleratorCallbackBinding] in the given context, if any,
-  /// and creates a dependency relationship that will rebuild the context when
-  /// [onInvoke] changes.
-  ///
-  /// If no [MenuAcceleratorCallbackBinding] is found, returns null.
-  ///
-  /// See also:
-  ///
-  /// * [of], which is similar, but asserts if no [MenuAcceleratorCallbackBinding]
-  ///   is found.
   static MenuAcceleratorCallbackBinding? maybeOf(BuildContext context) {
     return context
         .dependOnInheritedWidgetOfExactType<MenuAcceleratorCallbackBinding>();
   }
 
-  /// Returns the active [MenuAcceleratorCallbackBinding] in the given context, and
-  /// creates a dependency relationship that will rebuild the context when
-  /// [onInvoke] changes.
-  ///
-  /// If no [MenuAcceleratorCallbackBinding] is found, returns will assert in debug mode
-  /// and throw an exception in release mode.
-  ///
-  /// See also:
-  ///
-  /// * [maybeOf], which is similar, but returns null if no
-  ///   [MenuAcceleratorCallbackBinding] is found.
   static MenuAcceleratorCallbackBinding of(BuildContext context) {
     final MenuAcceleratorCallbackBinding? result = maybeOf(context);
     assert(() {
@@ -2697,139 +1825,27 @@ class MenuAcceleratorCallbackBinding extends InheritedWidget {
   }
 }
 
-/// The type of builder function used for building a [MenuAcceleratorLabel]'s
-/// [MenuAcceleratorLabel.builder] function.
-///
-/// {@template flutter.material.menu_anchor.menu_accelerator_child_builder.args}
-/// The arguments to the function are as follows:
-///
-/// * The `context` supplies the [BuildContext] to use.
-/// * The `label` is the [MenuAcceleratorLabel.label] attribute for the relevant
-///   [MenuAcceleratorLabel] with the accelerator markers stripped out of it.
-/// * The `index` is the index of the accelerator character within the
-///   `label.characters` that applies to this accelerator. If it is -1, then the
-///   accelerator should not be highlighted. Otherwise, the given character
-///   should be highlighted somehow in the rendered label (typically with an
-///   underscore). Importantly, `index` is not an index into the [String]
-///   `label`, it is an index into the [Characters] iterable returned by
-///   `label.characters`, so that it is in terms of user-visible characters
-///   (a.k.a. grapheme clusters), not Unicode code points.
-/// {@endtemplate}
-///
-/// See also:
-///
-/// * [MenuAcceleratorLabel.defaultLabelBuilder], which is the implementation
-///   used as the default value for [MenuAcceleratorLabel.builder].
 typedef MenuAcceleratorChildBuilder = Widget Function(
   BuildContext context,
   String label,
   int index,
 );
 
-/// A widget that draws the label text for a menu item (typically a
-/// [MenuItemButton] or [SubmenuButton]) and renders its child with information
-/// about the currently active keyboard accelerator.
-///
-/// On platforms other than macOS and iOS, this widget listens for the Alt key
-/// to be pressed, and when it is down, will update the label by calling the
-/// builder again with the position of the accelerator in the label string.
-/// While the Alt key is pressed, it registers a shortcut with the
-/// [ShortcutRegistry] mapped to a [VoidCallbackIntent] containing the callback
-/// defined by the nearest [MenuAcceleratorCallbackBinding].
-///
-/// Because the accelerators are registered with the [ShortcutRegistry], any
-/// other shortcuts in the widget tree between the [primaryFocus] and the
-/// [ShortcutRegistry] that define Alt-based shortcuts using the same keys will
-/// take precedence over the accelerators.
-///
-/// Because accelerators aren't used on macOS and iOS, the label ignores the Alt
-/// key on those platforms, and the [builder] is always given -1 as an
-/// accelerator index. Accelerator labels are still stripped of their
-/// accelerator markers.
-///
-/// The built-in menu items [MenuItemButton] and [SubmenuButton] already provide
-/// the appropriate [MenuAcceleratorCallbackBinding], so unless you are creating
-/// your own custom menu item type that takes a [MenuAcceleratorLabel], it is
-/// not necessary to provide one.
-///
-/// {@template flutter.material.MenuAcceleratorLabel.accelerator_sample}
-/// {@tool dartpad} This example shows a [MenuBar] that handles keyboard
-/// accelerators using [MenuAcceleratorLabel]. To use the accelerators, press
-/// the Alt key to see which letters are underlined in the menu bar, and then
-/// press the appropriate letter. Accelerators are not supported on macOS or iOS
-/// since those platforms don't support them natively, so this demo will only
-/// show a regular Material menu bar on those platforms.
-///
-/// ** See code in examples/api/lib/material/menu_anchor/menu_accelerator_label.0.dart **
-/// {@end-tool}
-/// {@endtemplate}
 class MenuAcceleratorLabel extends StatefulWidget {
-  /// Creates a const [MenuAcceleratorLabel].
-  ///
-  /// The [label] parameter is required.
   const MenuAcceleratorLabel(
     this.label, {
     super.key,
     this.builder = defaultLabelBuilder,
   });
 
-  /// The label string that should be displayed.
-  ///
-  /// The label string provides the label text, as well as the possible
-  /// characters which could be used as accelerators in the menu system.
-  ///
-  /// {@template flutter.material.menu_anchor.menu_accelerator_label.label}
-  /// To indicate which letters in the label are to be used as accelerators, add
-  /// an "&" character before the character in the string. If more than one
-  /// character has an "&" in front of it, then the characters appearing earlier
-  /// in the string are preferred. To represent a literal "&", insert "&&" into
-  /// the string. All other ampersands will be removed from the string before
-  /// calling [MenuAcceleratorLabel.builder]. Bare ampersands at the end of the
-  /// string or before whitespace are stripped and ignored.
-  /// {@endtemplate}
-  ///
-  /// See also:
-  ///
-  /// * [displayLabel], which returns the [label] with all of the ampersands
-  ///   stripped out of it, and double ampersands converted to ampersands.
-  /// * [stripAcceleratorMarkers], which returns the supplied string with all of
-  ///   the ampersands stripped out of it, and double ampersands converted to
-  ///   ampersands, and optionally calls a callback with the index of the
-  ///   accelerator character found.
   final String label;
 
-  /// Returns the [label] with any accelerator markers removed.
-  ///
-  /// This getter just calls [stripAcceleratorMarkers] with the [label].
   String get displayLabel => stripAcceleratorMarkers(label);
 
-  /// The optional [MenuAcceleratorChildBuilder] which is used to build the
-  /// widget that displays the label itself.
-  ///
-  /// The [defaultLabelBuilder] function serves as the default value for
-  /// [builder], rendering the label as a [RichText] widget with appropriate
-  /// [TextSpan]s for rendering the label with an underscore under the selected
-  /// accelerator for the label when accelerators have been activated.
-  ///
-  /// {@macro flutter.material.menu_anchor.menu_accelerator_child_builder.args}
-  ///
-  /// When writing the builder function, it's not necessary to take the current
-  /// platform into account. On platforms which don't support accelerators (e.g.
-  /// macOS and iOS), the passed accelerator index will always be -1, and the
-  /// accelerator markers will already be stripped.
   final MenuAcceleratorChildBuilder builder;
 
-  /// Whether [label] contains an accelerator definition.
-  ///
-  /// {@macro flutter.material.menu_anchor.menu_accelerator_label.label}
   bool get hasAccelerator => RegExp(r'&(?!([&\s]|$))').hasMatch(label);
 
-  /// Serves as the default value for [builder], rendering the label as a
-  /// [RichText] widget with appropriate [TextSpan]s for rendering the label
-  /// with an underscore under the selected accelerator for the label when the
-  /// [index] is non-negative, and a [Text] widget when the [index] is negative.
-  ///
-  /// {@macro flutter.material.menu_anchor.menu_accelerator_child_builder.args}
   static Widget defaultLabelBuilder(
     BuildContext context,
     String label,
@@ -2860,26 +1876,16 @@ class MenuAcceleratorLabel extends StatefulWidget {
     );
   }
 
-  /// Strips out any accelerator markers from the given [label], and unescapes
-  /// any escaped ampersands.
-  ///
-  /// If [setIndex] is supplied, it will be called before this function returns
-  /// with the index in the returned string of the accelerator character.
-  ///
-  /// {@macro flutter.material.menu_anchor.menu_accelerator_label.label}
   static String stripAcceleratorMarkers(String label,
       {void Function(int index)? setIndex}) {
     int quotedAmpersands = 0;
     final StringBuffer displayLabel = StringBuffer();
     int acceleratorIndex = -1;
-    // Use characters so that we don't split up surrogate pairs and interpret
-    // them incorrectly.
+
     final Characters labelChars = label.characters;
     final Characters ampersand = '&'.characters;
     bool lastWasAmpersand = false;
     for (int i = 0; i < labelChars.length; i += 1) {
-      // Stop looking one before the end, since a single ampersand at the end is
-      // just treated as a quoted ampersand.
       final Characters character = labelChars.characterAt(i);
       if (lastWasAmpersand) {
         lastWasAmpersand = false;
@@ -2891,7 +1897,6 @@ class MenuAcceleratorLabel extends StatefulWidget {
         continue;
       }
       if (i == labelChars.length - 1) {
-        // Strip bare ampersands at the end of a string.
         break;
       }
       lastWasAmpersand = true;
@@ -2899,12 +1904,9 @@ class MenuAcceleratorLabel extends StatefulWidget {
       if (acceleratorIndex == -1 &&
           acceleratorCharacter != ampersand &&
           acceleratorCharacter.toString().trim().isNotEmpty) {
-        // Don't set the accelerator index if the character is an ampersand,
-        // or whitespace.
         acceleratorIndex = i - quotedAmpersands;
       }
-      // As we encounter '&<character>' pairs, the following indices must be
-      // adjusted so that they correspond with indices in the stripped string.
+
       quotedAmpersands += 1;
     }
     setIndex?.call(acceleratorIndex);
@@ -2998,7 +2000,7 @@ class _MenuAcceleratorLabelState extends State<MenuAcceleratorLabel> {
         _updateAcceleratorShortcut();
       });
     }
-    // Just listening, does't ever handle a key.
+
     return false;
   }
 
@@ -3006,16 +2008,7 @@ class _MenuAcceleratorLabelState extends State<MenuAcceleratorLabel> {
     assert(_platformSupportsAccelerators);
     _shortcutRegistryEntry?.dispose();
     _shortcutRegistryEntry = null;
-    // Before registering an accelerator as a shortcut it should meet these
-    // conditions:
-    //
-    // 1) Is showing accelerators (i.e. Alt key is down).
-    // 2) Has an accelerator marker in the label.
-    // 3) Has an associated action callback for the label (from the
-    //    MenuAcceleratorCallbackBinding).
-    // 4) Is part of an anchor that either doesn't have a submenu, or doesn't
-    //    have any submenus currently open (only the "deepest" open menu should
-    //    have accelerator shortcuts registered).
+
     if (_showAccelerators &&
         _acceleratorIndex != -1 &&
         _binding?.onInvoke != null &&
@@ -3047,17 +2040,7 @@ class _MenuAcceleratorLabelState extends State<MenuAcceleratorLabel> {
   }
 }
 
-/// A label widget that is used as the label for a [MenuItemButton] or
-/// [SubmenuButton].
-///
-/// It not only shows the [SubmenuButton.child] or [MenuItemButton.child], but if
-/// there is a shortcut associated with the [MenuItemButton], it will display a
-/// mnemonic for the shortcut. For [SubmenuButton]s, it will display a visual
-/// indicator that there is a submenu.
 class _MenuItemLabel extends StatelessWidget {
-  /// Creates a const [_MenuItemLabel].
-  ///
-  /// The [child] and [hasSubmenu] arguments are required.
   const _MenuItemLabel({
     required this.hasSubmenu,
     this.showDecoration = true,
@@ -3067,27 +2050,16 @@ class _MenuItemLabel extends StatelessWidget {
     required this.child,
   });
 
-  /// Whether or not this menu has a submenu.
-  ///
-  /// Determines whether the submenu arrow is shown or not.
   final bool hasSubmenu;
 
-  /// Whether or not this item should show decorations like shortcut labels or
-  /// submenu arrows. Items in a [MenuBar] don't show these decorations when
-  /// they are laid out horizontally.
   final bool showDecoration;
 
-  /// The optional icon that comes before the [child].
   final Widget? leadingIcon;
 
-  /// The optional icon that comes after the [child].
   final Widget? trailingIcon;
 
-  /// The shortcut for this label, so that it can generate a string describing
-  /// the shortcut.
   final MenuSerializableShortcut? shortcut;
 
-  /// The required label child widget.
   final Widget child;
 
   @override
@@ -3127,6 +2099,14 @@ class _MenuItemLabel extends StatelessWidget {
               ),
             ),
           ),
+        // if (showDecoration && hasSubmenu)
+        //   Padding(
+        //     padding: EdgeInsetsDirectional.only(start: horizontalPadding),
+        //     child: const Icon(
+        //       Icons.arrow_right, // Automatically switches with text direction.
+        //       size: _kDefaultSubmenuIconSize,
+        //     ),
+        //   ),
       ],
     );
   }
@@ -3143,8 +2123,6 @@ class _MenuItemLabel extends StatelessWidget {
   }
 }
 
-// Positions the menu in the view while trying to keep as much as possible
-// visible in the view.
 class _MenuLayout extends SingleChildLayoutDelegate {
   const _MenuLayout({
     required this.anchorRect,
@@ -3158,39 +2136,26 @@ class _MenuLayout extends SingleChildLayoutDelegate {
     required this.parentOrientation,
   });
 
-  // Rectangle of underlying button, relative to the overlay's dimensions.
   final Rect anchorRect;
 
-  // Whether to prefer going to the left or to the right.
   final TextDirection textDirection;
 
-  // The alignment to use when finding the ideal location for the menu.
   final AlignmentGeometry alignment;
 
-  // The offset from the alignment position to find the ideal location for the
-  // menu.
   final Offset alignmentOffset;
 
-  // The position passed to the open method, if any.
   final Offset? menuPosition;
 
-  // The padding on the inside of the menu, so it can be accounted for when
-  // positioning.
   final EdgeInsetsGeometry menuPadding;
 
-  // List of rectangles that we should avoid overlapping. Unusable screen area.
   final Set<Rect> avoidBounds;
 
-  // The orientation of this menu
   final Axis orientation;
 
-  // The orientation of this menu's parent.
   final Axis parentOrientation;
 
   @override
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
-    // The menu can be at most the size of the overlay minus _kMenuViewPadding
-    // pixels in each direction.
     return BoxConstraints.loose(constraints.biggest).deflate(
       const EdgeInsets.all(_kMenuViewPadding),
     );
@@ -3198,9 +2163,6 @@ class _MenuLayout extends SingleChildLayoutDelegate {
 
   @override
   Offset getPositionForChild(Size size, Size childSize) {
-    // size: The size of the overlay.
-    // childSize: The size of the menu, when fully open, as determined by
-    // getConstraintsForChild.
     final Rect overlayRect = Offset.zero & size;
     double x;
     double y;
@@ -3240,18 +2202,11 @@ class _MenuLayout extends SingleChildLayoutDelegate {
     bool offRightSide(double x) => x + childSize.width > allowedRect.right;
     bool offTop(double y) => y < allowedRect.top;
     bool offBottom(double y) => y + childSize.height > allowedRect.bottom;
-    // Avoid going outside an area defined as the rectangle offset from the
-    // edge of the screen by the button padding. If the menu is off of the screen,
-    // move the menu to the other side of the button first, and then if it
-    // doesn't fit there, then just move it over as much as needed to make it
-    // fit.
+
     if (childSize.width >= allowedRect.width) {
-      // It just doesn't fit, so put as much on the screen as possible.
       x = allowedRect.left;
     } else {
       if (offLeftSide(x)) {
-        // If the parent is a different orientation than the current one, then
-        // just push it over instead of trying the other side.
         if (parentOrientation != orientation) {
           x = allowedRect.left;
         } else {
@@ -3277,7 +2232,6 @@ class _MenuLayout extends SingleChildLayoutDelegate {
       }
     }
     if (childSize.height >= allowedRect.height) {
-      // Too tall to fit, fit as much on as possible.
       y = allowedRect.top;
     } else {
       if (offTop(y)) {
@@ -3290,7 +2244,6 @@ class _MenuLayout extends SingleChildLayoutDelegate {
       } else if (offBottom(y)) {
         final double newY = anchorRect.top - childSize.height;
         if (!offTop(newY)) {
-          // Only move the menu up if its parent is horizontal (MenuAnchor/MenuBar).
           if (parentOrientation == Axis.horizontal) {
             y = newY - alignmentOffset.dy;
           } else {
@@ -3329,10 +2282,6 @@ class _MenuLayout extends SingleChildLayoutDelegate {
   }
 }
 
-/// A widget that manages a list of menu buttons in a menu.
-///
-/// It sizes itself to the widest/tallest item it contains, and then sizes all
-/// the other entries to match.
 class _MenuPanel extends StatefulWidget {
   const _MenuPanel({
     required this.menuStyle,
@@ -3342,27 +2291,14 @@ class _MenuPanel extends StatefulWidget {
     required this.children,
   });
 
-  /// The menu style that has all the attributes for this menu panel.
   final MenuStyle? menuStyle;
 
-  /// {@macro flutter.material.Material.clipBehavior}
-  ///
-  /// Defaults to [Clip.none].
   final Clip clipBehavior;
 
-  /// Determine if a [UnconstrainedBox] can be applied to the menu panel to allow it to render
-  /// at its "natural" size.
-  ///
-  /// Defaults to true. When it is set to false, it can be useful when the menu should
-  /// be constrained in both main-axis and cross-axis, such as a [DropdownMenu].
   final bool crossAxisUnconstrained;
 
-  /// The layout orientation of this panel.
   final Axis orientation;
 
-  /// The list of widgets to use as children of this menu bar.
-  ///
-  /// These are the top level [SubmenuButton]s.
   final List<Widget> children;
 
   @override
@@ -3425,16 +2361,12 @@ class _MenuPanelState extends State<_MenuPanel> {
         resolve<EdgeInsetsGeometry?>((MenuStyle? style) => style?.padding) ??
             EdgeInsets.zero;
     final Offset densityAdjustment = visualDensity.baseSizeAdjustment;
-    // Per the Material Design team: don't allow the VisualDensity
-    // adjustment to reduce the width of the left/right padding. If we
-    // did, VisualDensity.compact, the default for desktop/web, would
-    // reduce the horizontal padding to zero.
+
     final double dy = densityAdjustment.dy;
     final double dx = math.max(0, densityAdjustment.dx);
     final EdgeInsetsGeometry resolvedPadding = padding
         .add(EdgeInsets.symmetric(horizontal: dx, vertical: dy))
-        .clamp(EdgeInsets.zero,
-            EdgeInsetsGeometry.infinity); // ignore_clamp_double_lint
+        .clamp(EdgeInsets.zero, EdgeInsetsGeometry.infinity);
 
     BoxConstraints effectiveConstraints = visualDensity.effectiveConstraints(
       BoxConstraints(
@@ -3512,7 +2444,6 @@ class _MenuPanelState extends State<_MenuPanel> {
   }
 }
 
-// A widget that defines the menu drawn inside of the overlay entry.
 class _Submenu extends StatelessWidget {
   const _Submenu({
     required this.anchor,
@@ -3534,7 +2465,6 @@ class _Submenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Use the text direction of the context where the button is.
     final TextDirection textDirection = Directionality.of(context);
     final MenuStyle? themeStyle;
     final MenuStyle defaultStyle;
@@ -3584,16 +2514,12 @@ class _Submenu extends StatelessWidget {
         resolve<EdgeInsetsGeometry?>((MenuStyle? style) => style?.padding) ??
             EdgeInsets.zero;
     final Offset densityAdjustment = visualDensity.baseSizeAdjustment;
-    // Per the Material Design team: don't allow the VisualDensity
-    // adjustment to reduce the width of the left/right padding. If we
-    // did, VisualDensity.compact, the default for desktop/web, would
-    // reduce the horizontal padding to zero.
+
     final double dy = densityAdjustment.dy;
     final double dx = math.max(0, densityAdjustment.dx);
     final EdgeInsetsGeometry resolvedPadding = padding
         .add(EdgeInsets.fromLTRB(dx, dy, dx, dy))
-        .clamp(EdgeInsets.zero,
-            EdgeInsetsGeometry.infinity); // ignore_clamp_double_lint
+        .clamp(EdgeInsets.zero, EdgeInsetsGeometry.infinity);
 
     return Theme(
       data: Theme.of(context).copyWith(
@@ -3634,7 +2560,6 @@ class _Submenu extends StatelessWidget {
                   child: Shortcuts(
                     shortcuts: _kMenuTraversalShortcuts,
                     child: Directionality(
-                      // Copy the directionality from the button into the overlay.
                       textDirection: textDirection,
                       child: _MenuPanel(
                         menuStyle: menuStyle,
@@ -3655,8 +2580,6 @@ class _Submenu extends StatelessWidget {
   }
 }
 
-/// Wraps the [MaterialStateMouseCursor] so that it can default to
-/// [MouseCursor.uncontrolled] if none is set.
 class _MouseCursor extends MaterialStateMouseCursor {
   const _MouseCursor(this.resolveCallback);
 
@@ -3670,15 +2593,6 @@ class _MouseCursor extends MaterialStateMouseCursor {
   String get debugDescription => 'Menu_MouseCursor';
 }
 
-/// A debug print function, which should only be called within an assert, like
-/// so:
-///
-///   assert(_debugMenuInfo('Debug Message'));
-///
-/// so that the call is entirely removed in release builds.
-///
-/// Enable debug printing by setting [_kDebugMenus] to true at the top of the
-/// file.
 bool _debugMenuInfo(String message, [Iterable<String>? details]) {
   assert(() {
     if (_kDebugMenus) {
@@ -3691,11 +2605,10 @@ bool _debugMenuInfo(String message, [Iterable<String>? details]) {
     }
     return true;
   }());
-  // Return true so that it can be easily used inside of an assert.
+
   return true;
 }
 
-/// Whether [defaultTargetPlatform] is an Apple platform (Mac or iOS).
 bool get _isApple {
   switch (defaultTargetPlatform) {
     case TargetPlatform.iOS:
@@ -3709,29 +2622,13 @@ bool get _isApple {
   }
 }
 
-/// Whether [defaultTargetPlatform] is one that uses symbolic shortcuts.
-///
-/// Mac and iOS use special symbols for modifier keys instead of their names,
-/// render them in a particular order defined by Apple's human interface
-/// guidelines, and format them so that the modifier keys always align.
 bool get _usesSymbolicModifiers {
   return _isApple;
 }
 
 bool get _platformSupportsAccelerators {
-  // On iOS and macOS, pressing the Option key (a.k.a. the Alt key) causes a
-  // different set of characters to be generated, and the native menus don't
-  // support accelerators anyhow, so we just disable accelerators on these
-  // platforms.
   return !_isApple;
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - Menu
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
 class _MenuBarDefaultsM3 extends MenuStyle {
   _MenuBarDefaultsM3(this.context)
@@ -3795,10 +2692,6 @@ class _MenuButtonDefaultsM3 extends ButtonStyle {
     return ButtonStyleButton.allOrNull<Color>(Colors.transparent);
   }
 
-  // No default shadow color
-
-  // No default surface tint color
-
   @override
   MaterialStateProperty<double>? get elevation {
     return ButtonStyleButton.allOrNull<double>(0.0);
@@ -3841,8 +2734,6 @@ class _MenuButtonDefaultsM3 extends ButtonStyle {
       return _colors.onSurfaceVariant;
     });
   }
-
-  // No default fixedSize
 
   @override
   MaterialStateProperty<Size>? get maximumSize {
@@ -3890,8 +2781,6 @@ class _MenuButtonDefaultsM3 extends ButtonStyle {
         _scaledPadding(context));
   }
 
-  // No default side
-
   @override
   MaterialStateProperty<OutlinedBorder>? get shape {
     return ButtonStyleButton.allOrNull<OutlinedBorder>(
@@ -3908,22 +2797,15 @@ class _MenuButtonDefaultsM3 extends ButtonStyle {
 
   @override
   MaterialStateProperty<TextStyle?> get textStyle {
-    // TODO(tahatesser): This is taken from https://m3.material.io/components/menus/specs
-    // Update this when the token is available.
     return MaterialStatePropertyAll<TextStyle?>(_textTheme.labelLarge);
   }
 
   @override
   VisualDensity? get visualDensity => Theme.of(context).visualDensity;
 
-  // The horizontal padding number comes from the spec.
   EdgeInsetsGeometry _scaledPadding(BuildContext context) {
     VisualDensity visualDensity = Theme.of(context).visualDensity;
-    // When horizontal VisualDensity is greater than zero, set it to zero
-    // because the [ButtonStyleButton] has already handle the padding based on the density.
-    // However, the [ButtonStyleButton] doesn't allow the [VisualDensity] adjustment
-    // to reduce the width of the left/right padding, so we need to handle it here if
-    // the density is less than zero, such as on desktop platforms.
+
     if (visualDensity.horizontal > 0) {
       visualDensity = VisualDensity(vertical: visualDensity.vertical);
     }
@@ -3986,5 +2868,3 @@ class _MenuDefaultsM3 extends MenuStyle {
   @override
   VisualDensity get visualDensity => Theme.of(context).visualDensity;
 }
-
-// END GENERATED TOKEN PROPERTIES - Menu
