@@ -45,6 +45,7 @@ class CascadingMenu extends ConsumerWidget {
     }
 
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         custom.MenuAnchor(
           alignmentOffset: const Offset(0, 12),
@@ -145,15 +146,12 @@ class CascadingMenu extends ConsumerWidget {
                   controller.open();
                 }
               },
-              child: Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Icon(
-                  AppIcons.ellipsisCircle,
-                  size: 22,
-                  color: isOpen
-                      ? AppColors.activeGreen.withOpacity(.2)
-                      : AppColors.activeGreen,
-                ),
+              child: Icon(
+                AppIcons.ellipsisCircle,
+                size: 22,
+                color: isOpen
+                    ? AppColors.activeGreen.withOpacity(.2)
+                    : AppColors.activeGreen,
               ),
             );
           },

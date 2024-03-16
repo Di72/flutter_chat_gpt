@@ -9,6 +9,7 @@
 #include <desktop_window/desktop_window_plugin.h>
 #include <isar_flutter_libs/isar_flutter_libs_plugin.h>
 #include <rive_common/rive_plugin.h>
+#include <sentry_flutter/sentry_flutter_plugin.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
   DesktopWindowPluginRegisterWithRegistrar(
@@ -17,4 +18,6 @@ void RegisterPlugins(flutter::PluginRegistry* registry) {
       registry->GetRegistrarForPlugin("IsarFlutterLibsPlugin"));
   RivePluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("RivePlugin"));
+  SentryFlutterPluginRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("SentryFlutterPlugin"));
 }

@@ -1,13 +1,15 @@
+import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_chat_gpt/features/current_chat/presentation/chat_screen.dart';
 import 'package:flutter_chat_gpt/shared/commom_libs.dart';
 
 import 'package:flutter_chat_gpt/shared/widgets/navigation_bar/cascading_menu.dart';
 import 'package:intl/intl.dart';
 import 'package:rive/rive.dart';
 
-class ListChatScreen extends HookWidget {
-  const ListChatScreen({super.key});
+class DashboardScreen extends HookWidget {
+  const DashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,16 +20,11 @@ class ListChatScreen extends HookWidget {
       children: [
         CustomScrollView(
           slivers: <Widget>[
-            CupertinoSliverNavigationBar(
-              stretch: true,
-              backgroundColor: CupertinoTheme.of(context)
-                  .scaffoldBackgroundColor
-                  .withOpacity(0.2),
-              largeTitle: Text(AppLocalizations.of(context).notes),
-              trailing: const CascadingMenu(),
+            FlexibleSliverAppBar(
+              title: AppLocalizations.of(context).notes,
             ),
             SliverPadding(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
@@ -75,7 +72,7 @@ class ListChatScreen extends HookWidget {
           child: ButtonWrapper(
             onTap: () {
               animationController.forward();
-              context.push(ScreenPaths.details);
+              context.push(ScreenPaths.chat);
             },
             child: Container(
               height: 80,

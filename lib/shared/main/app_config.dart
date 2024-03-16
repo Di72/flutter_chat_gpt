@@ -10,7 +10,7 @@ import 'package:flutter_chat_gpt/shared/utils/platform_info.dart';
 class AppConfig {
   Future<void> bootstrap(AppEnvironment environment) async {
     if (PlatformInfo.isDesktop) {
-      await DesktopWindow.setMinWindowSize($styles.sizes.minAppSize);
+      await DesktopWindow.setMinWindowSize(const Size(380, 650));
     }
 
     SystemChrome.setSystemUIOverlayStyle(

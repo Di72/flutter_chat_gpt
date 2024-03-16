@@ -1,16 +1,15 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_chat_gpt/features/current_chat/presentation/current_chat.dart';
+import 'package:flutter_chat_gpt/features/current_chat/presentation/chat_screen.dart';
 import 'package:flutter_chat_gpt/shared/main/app_scaffold.dart';
 import 'package:flutter_chat_gpt/shared/commom_libs.dart';
-import 'package:flutter_chat_gpt/features/list_chat/presentation/list_chat.dart';
+import 'package:flutter_chat_gpt/features/list_chat/presentation/dashboard_screen.dart';
 
 class ScreenPaths {
-  static String home = '/';
-  static String details = '/details';
+  static String dashboard = '/';
+  static String chat = '/chat';
 }
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: ScreenPaths.home,
+  initialLocation: ScreenPaths.dashboard,
   routes: <RouteBase>[
     ShellRoute(
       builder: (context, router, navigator) {
@@ -18,12 +17,12 @@ final GoRouter appRouter = GoRouter(
       },
       routes: <RouteBase>[
         AppRoute(
-          ScreenPaths.home,
-          (_) => const ListChatScreen(),
+          ScreenPaths.dashboard,
+          (_) => const DashboardScreen(),
         ),
         AppRoute(
-          ScreenPaths.details,
-          (_) => const CurrentChatScreen(),
+          ScreenPaths.chat,
+          (_) => const ChatScreen(),
         ),
       ],
     )
