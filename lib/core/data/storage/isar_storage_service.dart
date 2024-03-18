@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter_chat_gpt/core/domain/collections/localization_collection.dart';
+import 'package:flutter_chat_gpt/core/domain/collections/theme_collection.dart';
 import 'package:isar/isar.dart';
 import 'package:flutter_chat_gpt/core/data/storage/storage_service_notifier.dart';
-import 'package:flutter_chat_gpt/core/domain/models/collections/localization_collection.dart';
-import 'package:flutter_chat_gpt/core/domain/models/collections/theme_collection.dart';
 import 'package:path_provider/path_provider.dart';
 
 class IsarStorageService extends StorageServiceAsyncNotifier {

@@ -1,7 +1,7 @@
-import 'package:flutter_chat_gpt/features/current_chat/presentation/chat_screen.dart';
+import 'package:flutter_chat_gpt/features/chat/presentation/chat_screen.dart';
 import 'package:flutter_chat_gpt/shared/main/app_scaffold.dart';
 import 'package:flutter_chat_gpt/shared/commom_libs.dart';
-import 'package:flutter_chat_gpt/features/list_chat/presentation/dashboard_screen.dart';
+import 'package:flutter_chat_gpt/features/dashboard/presentation/dashboard_screen.dart';
 
 class ScreenPaths {
   static String dashboard = '/';

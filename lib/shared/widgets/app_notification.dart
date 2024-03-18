@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_chat_gpt/shared/commom_libs.dart';
+import 'package:flutter_chat_gpt/shared/main/app_scaffold.dart';
 import 'package:overlay_support/overlay_support.dart';
 
 class AppNotification extends StatelessWidget {
@@ -15,33 +16,43 @@ class AppNotification extends StatelessWidget {
     String text,
   ) =>
       AppNotification(
-        child: Padding(
-          padding: const EdgeInsets.only(
-            top: 12,
-            bottom: 12,
-            left: 12,
-            right: 12,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            border: Border.all(color: CupertinoColors.systemRed, width: 2),
+            color: CupertinoTheme.of(context)
+                .scaffoldBackgroundColor
+                .withOpacity(0.7),
+            borderRadius: BorderRadius.circular(10),
           ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Text(
-                  text,
-                  style: TextStyle(
-                    color: CupertinoTheme.of(context).primaryContrastingColor,
+          child: Padding(
+            padding: const EdgeInsets.only(
+              top: 12,
+              bottom: 12,
+              left: 12,
+              right: 12,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Text(
+                    text,
+                    style: TextStyle(
+                      color: CupertinoTheme.of(context).primaryContrastingColor,
+                      fontSize: $styles.scale * 14,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 6),
-              const Center(
-                child: Icon(
-                  CupertinoIcons.exclamationmark_circle_fill,
-                  size: 32,
-                  color: CupertinoColors.systemRed,
+                const SizedBox(width: 6),
+                const Center(
+                  child: Icon(
+                    CupertinoIcons.exclamationmark_circle_fill,
+                    size: 32,
+                    color: CupertinoColors.systemRed,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -74,15 +85,7 @@ class AppNotification extends StatelessWidget {
       borderRadius: BorderRadius.circular(10),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-        child: Container(
-          decoration: BoxDecoration(
-            color: CupertinoTheme.of(context)
-                .scaffoldBackgroundColor
-                .withOpacity(0.7),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: child,
-        ),
+        child: child,
       ),
     );
   }

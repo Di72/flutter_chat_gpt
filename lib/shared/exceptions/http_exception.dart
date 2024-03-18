@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter_chat_gpt/core/domain/models/either.dart';
-import 'package:flutter_chat_gpt/core/domain/models/response.dart';
+import 'package:flutter_chat_gpt/shared/widgets/app_notification.dart';
+import 'package:overlay_support/overlay_support.dart';
 
 class AppException implements Exception {
   final String message;
@@ -11,7 +11,14 @@ class AppException implements Exception {
     required this.message,
     required this.statusCode,
     required this.identifier,
-  });
+  }) {
+    showOverlayNotification(
+      (context) => AppNotification.error(
+        context,
+        message,
+      ),
+    );
+  }
   @override
   String toString() {
     return 'statusCode=$statusCode\nmessage=$message\nidentifier=$identifier';
@@ -30,10 +37,4 @@ class CacheFailureException extends Equatable implements AppException {
 
   @override
   List<Object?> get props => [message, statusCode, identifier];
-}
-
-//  extension
-
-extension HttpExceptionExtension on AppException {
-  Left<AppException, Response> get toLeft => Left<AppException, Response>(this);
 }

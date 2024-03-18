@@ -1,7 +1,7 @@
+import 'package:flutter_chat_gpt/core/domain/collections/localization_collection.dart';
 import 'package:intl/intl_standalone.dart';
 import 'package:isar/isar.dart';
 import 'package:flutter_chat_gpt/core/data/localization/localization_service_notifier.dart';
-import 'package:flutter_chat_gpt/core/domain/models/collections/localization_collection.dart';
 import 'package:flutter_chat_gpt/shared/commom_libs.dart';
 import 'package:flutter_chat_gpt/core/domain/providers/isar_storage_service_provider.dart';
 

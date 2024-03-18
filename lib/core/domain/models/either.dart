@@ -16,7 +16,7 @@ sealed class Either<L, R> {
 
 class Left<L, R> extends Either<L, R> {
   final L _l;
-  const Left(this._l);
+  Left(this._l);
   L get value => _l;
 }
 

@@ -1,18 +1,16 @@
-import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_chat_gpt/features/current_chat/presentation/chat_screen.dart';
+import 'package:flutter_chat_gpt/features/chat/domain/providers/chat_providers.dart';
+import 'package:flutter_chat_gpt/features/chat/presentation/chat_screen.dart';
 import 'package:flutter_chat_gpt/shared/commom_libs.dart';
-
-import 'package:flutter_chat_gpt/shared/widgets/navigation_bar/cascading_menu.dart';
 import 'package:intl/intl.dart';
 import 'package:rive/rive.dart';
 
-class DashboardScreen extends HookWidget {
+class DashboardScreen extends HookConsumerWidget {
   const DashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final animationController = useAnimationController();
     final items = useState(List<Map<String, DateTime>>.generate(
         100, (index) => {'Chat $index': DateTime.now()}));
@@ -70,9 +68,10 @@ class DashboardScreen extends HookWidget {
           bottom: 110,
           right: 70,
           child: ButtonWrapper(
-            onTap: () {
-              animationController.forward();
-              context.push(ScreenPaths.chat);
+            onTap: () async {
+              var response = await ref
+                  .read(chatRepositoryProvider)
+                  .sendMessage(message: "как сварить борщ?!");
             },
             child: Container(
               height: 80,

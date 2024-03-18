@@ -1,9 +1,8 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:flutter_chat_gpt/core/domain/collections/theme_collection.dart';
 import 'package:isar/isar.dart';
 import 'package:flutter_chat_gpt/core/data/theme/theme_service_notifier.dart';
-import 'package:flutter_chat_gpt/core/domain/models/collections/theme_collection.dart';
 import 'package:flutter_chat_gpt/shared/commom_libs.dart';
 import 'package:flutter_chat_gpt/core/domain/providers/isar_storage_service_provider.dart';
 
