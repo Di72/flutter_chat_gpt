@@ -37,7 +37,7 @@ mixin ExceptionHandlerMixin on NetworkService {
 
         case DioException:
           e as DioException;
-          message = e.response?.data?['message'] ?? 'Internal Error occurred';
+          message = 'Internal Error occurred';
           statusCode = 1;
           identifier = 'DioException ${e.message} \nat  $endpoint';
           break;

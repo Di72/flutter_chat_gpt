@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_chat_gpt/features/chat/domain/providers/chat_providers.dart';
 import 'package:flutter_chat_gpt/features/chat/presentation/chat_screen.dart';
 import 'package:flutter_chat_gpt/shared/commom_libs.dart';
 import 'package:intl/intl.dart';
@@ -69,9 +68,8 @@ class DashboardScreen extends HookConsumerWidget {
           right: 70,
           child: ButtonWrapper(
             onTap: () async {
-              var response = await ref
-                  .read(chatRepositoryProvider)
-                  .sendMessage(message: "как сварить борщ?!");
+              animationController.forward();
+              context.push(ScreenPaths.chat);
             },
             child: Container(
               height: 80,
@@ -140,10 +138,12 @@ class DismissibleCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(item.keys.first,
-              style: TextStyle(
-                  height: 1,
-                  color: CupertinoTheme.of(context).primaryContrastingColor)),
+          Text(
+            item.keys.first,
+            style: TextStyle(
+                height: 1,
+                color: CupertinoTheme.of(context).primaryContrastingColor),
+          ),
           const Gap(4),
           Text(
             DateFormat.yMEd().format(item.values.first),

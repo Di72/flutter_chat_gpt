@@ -8,12 +8,11 @@ import 'package:flutter_chat_gpt/core/domain/providers/isar_storage_service_prov
 
 class ThemeService extends ThemeServiceAsyncNotifier {
   Isar? _isar;
-  ThemeMode theme = ThemeMode.system;
 
   @override
   ThemeMode build() {
     getTheme();
-    return theme;
+    return ThemeMode.system;
   }
 
   @override

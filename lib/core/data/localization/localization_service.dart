@@ -8,12 +8,10 @@ import 'package:flutter_chat_gpt/core/domain/providers/isar_storage_service_prov
 class LocalizationService extends LocalizationServiceNotifier {
   late final Isar? _isar;
 
-  Locale locale = const Locale('en');
-
   @override
   Locale build() {
     getLocalization();
-    return locale;
+    return const Locale('en');
   }
 
   @override
@@ -31,7 +29,7 @@ class LocalizationService extends LocalizationServiceNotifier {
   @override
   Future<void> setLocalization(Locale newLocale) async {
     bool didChange = newLocale.languageCode != state.languageCode;
-    if (didChange && AppLocalizations.supportedLocales.contains(locale)) {
+    if (didChange && AppLocalizations.supportedLocales.contains(state)) {
       state = newLocale;
       final isar = _isar;
       isar?.writeTxnSync(() {

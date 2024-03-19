@@ -1,19 +1,20 @@
 import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_chat_gpt/features/chat/presentation/providers/chat_state_provider.dart';
 import 'package:flutter_chat_gpt/shared/commom_libs.dart';
-import 'package:flutter_chat_gpt/shared/widgets/app_notification.dart';
 import 'package:flutter_chat_gpt/shared/widgets/navigation_bar/cascading_menu.dart';
-import 'package:overlay_support/overlay_support.dart';
 
 import 'package:rive/rive.dart';
 
-class ChatScreen extends HookWidget {
+class ChatScreen extends HookConsumerWidget {
   const ChatScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final textEditingController = useTextEditingController();
+    final chatState = ref.watch(chatProvider);
+    final chatNotifier = ref.read(chatProvider.notifier);
     return Stack(
       children: [
         CustomScrollView(
@@ -28,6 +29,51 @@ class ChatScreen extends HookWidget {
                 ),
               ),
               title: AppLocalizations.of(context).newChat,
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.all(20),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final item = chatState.value?.messages[index];
+                    if (item?.role == "assistant") {
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 4),
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          color: AppColors.activeGreen,
+                          borderRadius: BorderRadius.all(
+                            const Radius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          item?.content ?? "",
+                          style: TextStyle(color: AppColors.white),
+                        ),
+                      );
+                    }
+
+                    if (item?.role == "user") {
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 4),
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: CupertinoTheme.of(context).primaryColor,
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(12),
+                          ),
+                        ),
+                        child: Text(item?.content ?? "",
+                            style: TextStyle(
+                                color: CupertinoTheme.of(context)
+                                    .primaryContrastingColor)),
+                      );
+                    }
+                    return null;
+                  },
+                  childCount: chatState.value?.messages.length,
+                ),
+              ),
             ),
           ],
         ),
@@ -49,13 +95,16 @@ class ChatScreen extends HookWidget {
               children: <Widget>[
                 Expanded(
                   child: CupertinoTextField(
+                    controller: textEditingController,
+                    onSubmitted: (value) {
+                      chatNotifier.sendMessage(value);
+                      textEditingController.clear();
+                    },
                     suffix: GestureDetector(
-                      onTap: () => showOverlayNotification(
-                        (context) => AppNotification.error(
-                          context,
-                          "Ошибка",
-                        ),
-                      ),
+                      onTap: () {
+                        chatNotifier.sendMessage(textEditingController.text);
+                        textEditingController.clear();
+                      },
                       child: Container(
                         height: 30,
                         width: 30,

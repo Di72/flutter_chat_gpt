@@ -21,15 +21,3 @@ Map<String, dynamic> _$$CompletionsRequestModelImplToJson(
       'model': instance.model,
       'messages': instance.messages,
     };
-
-_$ChatMessageImpl _$$ChatMessageImplFromJson(Map<String, dynamic> json) =>
-    _$ChatMessageImpl(
-      role: json['role'] as String? ?? "user",
-      content: json['content'] as String? ?? "",
-    );
-
-Map<String, dynamic> _$$ChatMessageImplToJson(_$ChatMessageImpl instance) =>
-    <String, dynamic>{
-      'role': instance.role,
-      'content': instance.content,
-    };
