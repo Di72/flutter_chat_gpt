@@ -4,12 +4,14 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_chat_gpt/shared/main/app_config.dart';
 import 'package:flutter_chat_gpt/shared/main/observers.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:statsfl/statsfl.dart';
 
 // By default run app in prod mode
 void main() => mainCommon(AppEnvironment.PROD);
 
 Future<void> mainCommon(AppEnvironment environment) async {
+  await dotenv.load(fileName: ".env");
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   // Keep native splash screen up until app is finished bootstrapping
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
