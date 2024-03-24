@@ -8,13 +8,20 @@ import 'package:flutter_chat_gpt/shared/widgets/navigation_bar/cascading_menu.da
 import 'package:rive/rive.dart';
 
 class ChatScreen extends HookConsumerWidget {
-  const ChatScreen({super.key});
+  const ChatScreen({this.chatId, super.key});
+  final String? chatId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textEditingController = useTextEditingController();
     final chatState = ref.watch(chatProvider);
     final chatNotifier = ref.read(chatProvider.notifier);
+    if (chatId != NEW_CHAT) {
+      useEffect(() {
+        chatNotifier.setState(chatId!);
+        return null;
+      }, []);
+    }
     return Stack(
       children: [
         CustomScrollView(
@@ -31,7 +38,8 @@ class ChatScreen extends HookConsumerWidget {
               title: AppLocalizations.of(context).newChat,
             ),
             SliverPadding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.only(
+                  left: 16, right: 16, top: 16, bottom: 50),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {

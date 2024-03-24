@@ -5,7 +5,7 @@ import 'package:flutter_chat_gpt/features/dashboard/presentation/dashboard_scree
 
 class ScreenPaths {
   static String dashboard = '/';
-  static String chat = '/chat';
+  static String chat(String? id) => '/chat/$id';
 }
 
 final GoRouter appRouter = GoRouter(
@@ -21,8 +21,10 @@ final GoRouter appRouter = GoRouter(
           (_) => const DashboardScreen(),
         ),
         AppRoute(
-          ScreenPaths.chat,
-          (_) => const ChatScreen(),
+          "/chat/:id",
+          (GoRouterState state) => ChatScreen(
+            chatId: state.pathParameters["id"],
+          ),
         ),
       ],
     )

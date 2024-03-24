@@ -1,15 +1,28 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:isar/isar.dart';
+import 'package:equatable/equatable.dart';
 
-part 'chat_message.freezed.dart';
 part 'chat_message.g.dart';
 
-@freezed
-class ChatMessage with _$ChatMessage {
-  factory ChatMessage({
-    @Default("") String role,
-    @Default("") String content,
-  }) = _ChatMessage;
+@embedded
+class ChatMessage extends Equatable {
+  final String role;
+  final String content;
 
-  factory ChatMessage.fromJson(Map<String, dynamic> json) =>
-      _$ChatMessageFromJson(json);
+  const ChatMessage({
+    this.role = "",
+    this.content = "",
+  });
+
+  Map<String, dynamic> toJson() => {
+        'role': role,
+        'content': content,
+      };
+
+  @override
+  List<Object?> get props => [content, role];
+
+  factory ChatMessage.fromJson(Map<String, dynamic> json) => ChatMessage(
+        role: json['role'] as String? ?? "",
+        content: json['content'] as String? ?? "",
+      );
 }

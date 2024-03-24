@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter_chat_gpt/core/domain/collections/chat_collection.dart';
 import 'package:flutter_chat_gpt/core/domain/collections/localization_collection.dart';
 import 'package:flutter_chat_gpt/core/domain/collections/theme_collection.dart';
 import 'package:isar/isar.dart';
@@ -26,7 +27,11 @@ class IsarStorageService extends StorageServiceAsyncNotifier {
       final Directory dir = await getApplicationDocumentsDirectory();
 
       await Isar.open(
-        [ThemeCollectionSchema, LocalizationCollectionSchema],
+        [
+          ThemeCollectionSchema,
+          LocalizationCollectionSchema,
+          ChatCollectionSchema,
+        ],
         inspector: true,
         directory: dir.path,
       );

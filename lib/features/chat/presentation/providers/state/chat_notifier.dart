@@ -1,58 +1,104 @@
+import 'package:flutter_chat_gpt/core/domain/collections/chat_collection.dart';
 import 'package:flutter_chat_gpt/core/domain/models/chat_message/chat_message.dart';
+import 'package:flutter_chat_gpt/core/domain/providers/isar_storage_service_provider.dart';
 import 'package:flutter_chat_gpt/features/chat/domain/providers/chat_providers.dart';
 import 'package:flutter_chat_gpt/features/chat/domain/repositories/chat_repository.dart';
 import 'package:flutter_chat_gpt/features/chat/presentation/providers/state/chat_state.dart';
+import 'package:flutter_chat_gpt/shared/constants/constants.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class ChatAutoDisposeAsyncNotifier extends AutoDisposeAsyncNotifier<ChatState> {
-  late ChatRepository chatRepository;
+import 'package:isar/isar.dart';
 
-  @override
-  Future<ChatState> build() async {
-    chatRepository = ref.read(chatRepositoryProvider);
-    return const ChatState.initial();
-  }
+class ChatAutoDisposeAsyncNotifier extends AutoDisposeAsyncNotifier<ChatState> {
+  late ChatRepository _chatRepository;
+  Isar? _isar;
 
   bool get isFetching => state.value?.state != const State.loading();
 
-  void sendMessage(String message) async {
-    final previousState = await future;
+  @override
+  Future<ChatState> build() async {
+    _isar = await ref.watch(storageServiceProvider.future);
+    _chatRepository = ref.watch(chatRepositoryProvider);
+    return const ChatState.initial();
+  }
 
+  Future<void> setState(String id) async {
+    await build();
+    final previousState = await _isar?.chatCollections.get(int.parse(id));
+
+    state = AsyncData(
+      ChatState(
+        id: previousState?.id.toString() ?? "",
+        messages: previousState?.messages ?? [],
+        state: const State.success(),
+      ),
+    );
+  }
+
+  void sendMessage(String message) async {
     List<ChatMessage> messages = [
-      ...previousState.messages,
+      ...state.value?.messages ?? [],
       ChatMessage(role: "user", content: message)
     ];
 
-    state =
-        AsyncData(ChatState(state: const State.loading(), messages: messages));
+    state = AsyncData(
+      state.value!.copyWith(state: const State.loading(), messages: messages),
+    );
 
-    final result = await chatRepository.sendMessage(messages: messages);
+    await updateChatStorage(
+        id: state.value?.id, messages: messages.cast<ChatMessage>());
+
+    final result = await _chatRepository.sendMessage(messages: messages);
 
     result.fold(
       (error) {
         state = AsyncData(
-          ChatState(
+          state.value!.copyWith(
             state: State.failure(error),
-            messages: [
-              ...state.value?.messages ?? [],
-            ],
           ),
         );
       },
-      (response) {
+      (response) async {
+        final responseMessages = [
+          ...state.value?.messages ?? [],
+          ...response.choices.map(
+            (choice) => ChatMessage(
+                role: choice.message.role, content: choice.message.content),
+          )
+        ];
         state = AsyncData(
-          ChatState(
+          state.value!.copyWith(
             state: const State.success(),
-            messages: [
-              ...state.value?.messages ?? [],
-              ...response.choices.map(
-                (choice) => ChatMessage(
-                    role: choice.message.role, content: choice.message.content),
-              )
-            ],
+            messages: responseMessages.cast<ChatMessage>(),
           ),
         );
+        await updateChatStorage(
+            id: state.value?.id,
+            messages: responseMessages.cast<ChatMessage>());
       },
+    );
+  }
+
+  Future<void> updateChatStorage({
+    required List<ChatMessage> messages,
+    String? id,
+  }) async {
+    ChatCollection? chat;
+    if (id != NEW_CHAT && id != "") {
+      chat = _isar?.chatCollections.getSync(int.parse(id!));
+      chat!.messages = messages;
+    } else {
+      chat = ChatCollection(messages);
+    }
+
+    await _isar?.writeTxn(() async {
+      await _isar?.chatCollections.put(chat!);
+    });
+    state = AsyncData(
+      state.value!.copyWith(
+        id: chat.id.toString(),
+        messages: messages.cast<ChatMessage>(),
+      ),
     );
   }
 
