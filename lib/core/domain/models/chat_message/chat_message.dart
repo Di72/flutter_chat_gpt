@@ -1,10 +1,9 @@
 import 'package:isar/isar.dart';
-import 'package:equatable/equatable.dart';
 
 part 'chat_message.g.dart';
 
 @embedded
-class ChatMessage extends Equatable {
+class ChatMessage {
   final String role;
   final String content;
 
@@ -17,9 +16,6 @@ class ChatMessage extends Equatable {
         'role': role,
         'content': content,
       };
-
-  @override
-  List<Object?> get props => [content, role];
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) => ChatMessage(
         role: json['role'] as String? ?? "",

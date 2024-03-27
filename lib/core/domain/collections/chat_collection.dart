@@ -5,9 +5,11 @@ part 'chat_collection.g.dart';
 
 @Collection()
 class ChatCollection {
-  ChatCollection(this.messages);
+  ChatCollection(this.messages, this.date);
 
   Id id = Isar.autoIncrement;
+
+  DateTime date;
 
   List<ChatMessage> messages = [];
 }

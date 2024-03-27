@@ -33,7 +33,7 @@ Future<void> mainCommon(AppEnvironment environment) async {
         ],
         // FPS monitor
         child: StatsFl(
-          isEnabled: true,
+          isEnabled: false,
           width: 200,
           height: 20,
           maxFps: 90,

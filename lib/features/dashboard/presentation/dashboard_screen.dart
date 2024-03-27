@@ -4,6 +4,7 @@ import 'package:flutter_chat_gpt/features/chat/presentation/chat_screen.dart';
 import 'package:flutter_chat_gpt/features/chat/presentation/providers/state/chat_state.dart';
 import 'package:flutter_chat_gpt/features/dashboard/presentation/providers/dashboard_state_provider.dart';
 import 'package:flutter_chat_gpt/shared/commom_libs.dart';
+import 'package:intl/intl.dart';
 import 'package:rive/rive.dart';
 
 class DashboardScreen extends HookConsumerWidget {
@@ -12,11 +13,13 @@ class DashboardScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final animationController = useAnimationController();
-    final dashboardState = ref.watch(dashboardProvider);
+
     final dashboardNotifier = ref.read(dashboardProvider.notifier);
+    final dashboardState = ref.watch(dashboardProvider);
     List<ChatState>? chats = dashboardState.value?.chats;
+
     useEffect(() {
-      dashboardNotifier.getChats();
+      dashboardNotifier.watchChats();
       return null;
     }, []);
     return Stack(
@@ -24,7 +27,7 @@ class DashboardScreen extends HookConsumerWidget {
         CustomScrollView(
           slivers: <Widget>[
             FlexibleSliverAppBar(
-              title: AppLocalizations.of(context).notes,
+              title: AppLocalizations.of(context).chats,
             ),
             SliverPadding(
               padding: const EdgeInsets.all(20),
@@ -52,7 +55,7 @@ class DashboardScreen extends HookConsumerWidget {
                                 child: Padding(
                                   padding: EdgeInsets.only(right: 28),
                                   child: Icon(
-                                    AppIcons.trash_fill,
+                                    AppIcons.trashFill,
                                     color: AppColors.white,
                                     size: 28,
                                   ),
@@ -63,6 +66,8 @@ class DashboardScreen extends HookConsumerWidget {
                               item: item,
                               index: index,
                               length: chats!.length,
+                              date: item.date!,
+                              forwardAnimation: animationController.forward,
                             ),
                           );
                         },
@@ -76,8 +81,8 @@ class DashboardScreen extends HookConsumerWidget {
         Positioned(
           bottom: 110,
           right: 70,
-          child: ButtonWrapper(
-            onTap: () async {
+          child: InkWell(
+            onTap: () {
               animationController.forward();
               context.push(ScreenPaths.chat(NEW_CHAT));
             },
@@ -125,16 +130,21 @@ class DismissibleCard extends StatelessWidget {
     required this.item,
     required this.index,
     required this.length,
+    required this.date,
+    required this.forwardAnimation,
   });
 
   final ChatState item;
   final int index;
   final int length;
+  final DateTime date;
+  final Function() forwardAnimation;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        forwardAnimation();
         context.push(ScreenPaths.chat(item.id));
       },
       child: Container(
@@ -142,6 +152,7 @@ class DismissibleCard extends StatelessWidget {
           left: 24,
           bottom: 12,
           top: 12,
+          right: 4,
         ),
         margin: const EdgeInsets.only(bottom: 2),
         decoration: BoxDecoration(
@@ -153,19 +164,20 @@ class DismissibleCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              item.messages.first.content,
+              item.messages.last.content,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                   height: 1,
                   color: CupertinoTheme.of(context).primaryContrastingColor),
             ),
             const Gap(4),
-            // Text(
-            //   DateFormat.yMEd().format(item.values.first),
-            //   style: const TextStyle(
-            //     color: AppColors.systemGrey2,
-            //     height: 1,
-            //   ),
-            // ),
+            Text(
+              "${DateFormat.Md().format(date)} ${DateFormat.Hms().format(date)}",
+              style: const TextStyle(
+                color: AppColors.systemGrey2,
+                height: 1,
+              ),
+            ),
           ],
         ),
       ),

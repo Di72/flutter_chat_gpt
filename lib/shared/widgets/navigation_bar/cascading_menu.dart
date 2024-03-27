@@ -1,6 +1,7 @@
 import 'package:flutter_chat_gpt/core/domain/providers/localization_provider.dart';
 import 'package:flutter_chat_gpt/core/domain/providers/theme_provider.dart';
 import 'package:flutter_chat_gpt/shared/commom_libs.dart';
+import 'package:flutter_chat_gpt/shared/main/app_scaffold.dart';
 import 'package:flutter_chat_gpt/shared/widgets/navigation_bar/cascading_menu_card.dart';
 import 'package:flutter_chat_gpt/shared/widgets/navigation_bar/menu_item_button_with_check_mark.dart';
 import 'package:flutter_chat_gpt/shared/widgets/custom_widgets/menu_anchor_custom.dart'
@@ -146,9 +147,9 @@ class CascadingMenu extends ConsumerWidget {
                   controller.open();
                 }
               },
-              child: Icon(
-                AppIcons.ellipsisCircle,
-                size: 22,
+              child: IconWrapper(
+                icon: AppIcons.ellipsisCircle,
+                verticalPadding: 8,
                 color: isOpen
                     ? AppColors.activeGreen.withOpacity(.2)
                     : AppColors.activeGreen,

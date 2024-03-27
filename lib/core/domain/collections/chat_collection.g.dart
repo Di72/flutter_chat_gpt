@@ -17,8 +17,13 @@ const ChatCollectionSchema = CollectionSchema(
   name: r'ChatCollection',
   id: -6047848219690401650,
   properties: {
-    r'messages': PropertySchema(
+    r'date': PropertySchema(
       id: 0,
+      name: r'date',
+      type: IsarType.dateTime,
+    ),
+    r'messages': PropertySchema(
+      id: 1,
       name: r'messages',
       type: IsarType.objectList,
       target: r'ChatMessage',
@@ -61,8 +66,9 @@ void _chatCollectionSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
+  writer.writeDateTime(offsets[0], object.date);
   writer.writeObjectList<ChatMessage>(
-    offsets[0],
+    offsets[1],
     allOffsets,
     ChatMessageSchema.serialize,
     object.messages,
@@ -77,12 +83,13 @@ ChatCollection _chatCollectionDeserialize(
 ) {
   final object = ChatCollection(
     reader.readObjectList<ChatMessage>(
-          offsets[0],
+          offsets[1],
           ChatMessageSchema.deserialize,
           allOffsets,
           ChatMessage(),
         ) ??
         [],
+    reader.readDateTime(offsets[0]),
   );
   object.id = id;
   return object;
@@ -96,6 +103,8 @@ P _chatCollectionDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
+      return (reader.readDateTime(offset)) as P;
+    case 1:
       return (reader.readObjectList<ChatMessage>(
             offset,
             ChatMessageSchema.deserialize,
@@ -204,6 +213,62 @@ extension ChatCollectionQueryWhere
 
 extension ChatCollectionQueryFilter
     on QueryBuilder<ChatCollection, ChatCollection, QFilterCondition> {
+  QueryBuilder<ChatCollection, ChatCollection, QAfterFilterCondition>
+      dateEqualTo(DateTime value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'date',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ChatCollection, ChatCollection, QAfterFilterCondition>
+      dateGreaterThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'date',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ChatCollection, ChatCollection, QAfterFilterCondition>
+      dateLessThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'date',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ChatCollection, ChatCollection, QAfterFilterCondition>
+      dateBetween(
+    DateTime lower,
+    DateTime upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'date',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<ChatCollection, ChatCollection, QAfterFilterCondition> idEqualTo(
       Id value) {
     return QueryBuilder.apply(this, (query) {
@@ -363,10 +428,34 @@ extension ChatCollectionQueryLinks
     on QueryBuilder<ChatCollection, ChatCollection, QFilterCondition> {}
 
 extension ChatCollectionQuerySortBy
-    on QueryBuilder<ChatCollection, ChatCollection, QSortBy> {}
+    on QueryBuilder<ChatCollection, ChatCollection, QSortBy> {
+  QueryBuilder<ChatCollection, ChatCollection, QAfterSortBy> sortByDate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'date', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ChatCollection, ChatCollection, QAfterSortBy> sortByDateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'date', Sort.desc);
+    });
+  }
+}
 
 extension ChatCollectionQuerySortThenBy
     on QueryBuilder<ChatCollection, ChatCollection, QSortThenBy> {
+  QueryBuilder<ChatCollection, ChatCollection, QAfterSortBy> thenByDate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'date', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ChatCollection, ChatCollection, QAfterSortBy> thenByDateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'date', Sort.desc);
+    });
+  }
+
   QueryBuilder<ChatCollection, ChatCollection, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -381,13 +470,25 @@ extension ChatCollectionQuerySortThenBy
 }
 
 extension ChatCollectionQueryWhereDistinct
-    on QueryBuilder<ChatCollection, ChatCollection, QDistinct> {}
+    on QueryBuilder<ChatCollection, ChatCollection, QDistinct> {
+  QueryBuilder<ChatCollection, ChatCollection, QDistinct> distinctByDate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'date');
+    });
+  }
+}
 
 extension ChatCollectionQueryProperty
     on QueryBuilder<ChatCollection, ChatCollection, QQueryProperty> {
   QueryBuilder<ChatCollection, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<ChatCollection, DateTime, QQueryOperations> dateProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'date');
     });
   }
 

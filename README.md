@@ -1,30 +1,47 @@
 # flutter_chat_gpt
 
-A new Flutter project.
+## Gif fast review
+<img src="https://raw.githubusercontent.com/Di72/img/master/image/qemu-system-x86_64_c79GMSW5s1%20(1).gif" width="40%">
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application that follows the
-[simple app state management
-tutorial](https://flutter.dev/docs/development/data-and-backend/state-mgmt/simple).
+* Clean Architecture
+* Cupertino style
+* OpenAI API
+* Change of theme (system, light, dark)
+* Change of localization (en, ru)
+* Responsive styles
+* Multi-Platform
+* Sentry
+* Feedback for Sentry
+* Isar database
+* Dio
+* Riverpod
+* go_router
+* Hooks
+* Rive
+* Freezed
+* flutter_animate
+* Codegen
+* Stream
 
-For help getting started with Flutter development, view the
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+and much more...
 
-## Assets
+## Building from Source
 
-The `assets` directory houses images, fonts, and any other files you want to
-include with your application.
+1. If you don't have Flutter SDK installed, please visit official [Flutter](https://flutter.dev/) site.
+2. Fetch latest source code from master branch.
 
-The `assets/images` directory contains [resolution-aware
-images](https://flutter.dev/docs/development/ui/assets-and-images#resolution-aware).
+```
+git clone https://github.com/Di72/flutter_chat_gpt
+```
 
-## Localization
+3. Run the app with Android Studio or VS Code. Or the command line:
 
-This project generates localized messages based on arb files found in
-the `lib/src/localization` directory.
+```
+flutter pub get
+flutter run
+```
 
-To support additional languages, please visit the tutorial on
-[Internationalizing Flutter
-apps](https://flutter.dev/docs/development/accessibility-and-localization/internationalization)
+4. Paste your API_KEY for OpenAI
+```

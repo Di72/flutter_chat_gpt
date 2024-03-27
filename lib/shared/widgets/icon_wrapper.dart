@@ -1,18 +1,20 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_gpt/shared/main/app_scaffold.dart';
 
-class ButtonWrapper extends StatelessWidget {
-  const ButtonWrapper({
+class IconWrapper extends StatelessWidget {
+  const IconWrapper({
     super.key,
+    required this.icon,
+    required this.color,
     this.horizontalPadding = 0,
     this.verticalPadding = 0,
-    required this.child,
-    required this.onTap,
+    this.onTap,
   });
 
   final double horizontalPadding;
   final double verticalPadding;
-  final Widget child;
+  final IconData icon;
+  final Color color;
   final Function()? onTap;
 
   @override
@@ -27,7 +29,11 @@ class ButtonWrapper extends StatelessWidget {
           left: horizontalPadding,
         ),
         color: Colors.transparent,
-        child: child,
+        child: Icon(
+          icon,
+          color: color,
+          size: $styles.scale * 30,
+        ),
       ),
     );
   }

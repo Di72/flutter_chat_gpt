@@ -8,7 +8,7 @@ export 'package:flutter_chat_gpt/shared/main/app.dart';
 export 'package:flutter_chat_gpt/shared/router/app_router.dart';
 export 'package:flutter_chat_gpt/shared/styles/colors.dart';
 export 'package:flutter_chat_gpt/shared/styles/themes.dart';
-export 'package:flutter_chat_gpt/shared/widgets/button_wrapper.dart';
+export 'package:flutter_chat_gpt/shared/widgets/icon_wrapper.dart';
 export 'package:flutter_gen/gen_l10n/app_localizations.dart';
 export 'package:flutter_hooks/flutter_hooks.dart';
 export 'package:flutter_localizations/flutter_localizations.dart';

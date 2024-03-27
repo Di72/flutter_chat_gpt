@@ -87,8 +87,9 @@ class ChatAutoDisposeAsyncNotifier extends AutoDisposeAsyncNotifier<ChatState> {
     if (id != NEW_CHAT && id != "") {
       chat = _isar?.chatCollections.getSync(int.parse(id!));
       chat!.messages = messages;
+      chat.date = DateTime.now();
     } else {
-      chat = ChatCollection(messages);
+      chat = ChatCollection(messages, DateTime.now());
     }
 
     await _isar?.writeTxn(() async {
@@ -100,9 +101,5 @@ class ChatAutoDisposeAsyncNotifier extends AutoDisposeAsyncNotifier<ChatState> {
         messages: messages.cast<ChatMessage>(),
       ),
     );
-  }
-
-  void resetState() {
-    state = const AsyncData(ChatState.initial());
   }
 }

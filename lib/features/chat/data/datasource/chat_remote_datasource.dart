@@ -1,6 +1,7 @@
 import 'package:flutter_chat_gpt/core/data/network/network_service.dart';
 import 'package:flutter_chat_gpt/core/domain/models/chat_message/chat_message.dart';
-import 'package:flutter_chat_gpt/core/domain/models/completions/%D1%81ompletions_request/completions_request_model.dart';
+import 'package:flutter_chat_gpt/core/domain/models/completions/completions_request/completions_request_model.dart';
+
 import 'package:flutter_chat_gpt/core/domain/models/completions/completions_response/completions_response_model.dart';
 import 'package:flutter_chat_gpt/core/domain/models/either.dart';
 import 'package:flutter_chat_gpt/shared/commom_libs.dart';
