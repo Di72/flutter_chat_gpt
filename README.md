@@ -1,7 +1,7 @@
 # flutter_chat_gpt
 
 ## Gif fast review
-<img src="https://raw.githubusercontent.com/Di72/img/master/image/qemu-system-x86_64_c79GMSW5s1%20(1).gif" width="40%">
+<img src="https://raw.githubusercontent.com/Di72/img/master/qemu-system-x86_64_miUN8lHpGH.gif" width="40%">
 
 ## Features
 
@@ -44,4 +44,3 @@ flutter run
 ```
 
 4. Paste your API_KEY for OpenAI
-```
