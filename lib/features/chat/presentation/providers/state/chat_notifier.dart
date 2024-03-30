@@ -13,7 +13,7 @@ class ChatAutoDisposeAsyncNotifier extends AutoDisposeAsyncNotifier<ChatState> {
   late ChatRepository _chatRepository;
   Isar? _isar;
 
-  bool get isFetching => state.value?.state != const State.loading();
+  bool get isloading => state.value?.state == const State.loading();
 
   @override
   Future<ChatState> build() async {

@@ -1,4 +1,5 @@
 /// Consolidate imports that are common across the app.
+library;
 
 // ignore: depend_on_referenced_packages
 export 'package:flutter_chat_gpt/core/data/storage/isar_storage_service.dart';

@@ -7,34 +7,34 @@ class AppShortcuts {
     // Activation
     if (kIsWeb) ...{
       // On the web, enter activates buttons, but not other controls.
-      SingleActivator(LogicalKeyboardKey.enter): ButtonActivateIntent(),
-      SingleActivator(LogicalKeyboardKey.numpadEnter): ButtonActivateIntent(),
+      const SingleActivator(LogicalKeyboardKey.enter): const ButtonActivateIntent(),
+      const SingleActivator(LogicalKeyboardKey.numpadEnter): const ButtonActivateIntent(),
     } else ...{
-      SingleActivator(LogicalKeyboardKey.enter): ActivateIntent(),
-      SingleActivator(LogicalKeyboardKey.numpadEnter): ActivateIntent(),
-      SingleActivator(LogicalKeyboardKey.space): ActivateIntent(),
-      SingleActivator(LogicalKeyboardKey.gameButtonA): ActivateIntent(),
+      const SingleActivator(LogicalKeyboardKey.enter): const ActivateIntent(),
+      const SingleActivator(LogicalKeyboardKey.numpadEnter): const ActivateIntent(),
+      const SingleActivator(LogicalKeyboardKey.space): const ActivateIntent(),
+      const SingleActivator(LogicalKeyboardKey.gameButtonA): const ActivateIntent(),
     },
 
     // Dismissal
-    SingleActivator(LogicalKeyboardKey.escape): DismissIntent(),
+    const SingleActivator(LogicalKeyboardKey.escape): const DismissIntent(),
 
     // Keyboard traversal.
-    SingleActivator(LogicalKeyboardKey.tab): NextFocusIntent(),
-    SingleActivator(LogicalKeyboardKey.tab, shift: true): PreviousFocusIntent(),
+    const SingleActivator(LogicalKeyboardKey.tab): const NextFocusIntent(),
+    const SingleActivator(LogicalKeyboardKey.tab, shift: true): const PreviousFocusIntent(),
 
     // Scrolling
-    SingleActivator(LogicalKeyboardKey.arrowUp):
-        ScrollIntent(direction: AxisDirection.up),
-    SingleActivator(LogicalKeyboardKey.arrowDown):
-        ScrollIntent(direction: AxisDirection.down),
-    SingleActivator(LogicalKeyboardKey.arrowLeft):
-        ScrollIntent(direction: AxisDirection.left),
-    SingleActivator(LogicalKeyboardKey.arrowRight):
-        ScrollIntent(direction: AxisDirection.right),
-    SingleActivator(LogicalKeyboardKey.pageUp): ScrollIntent(
+    const SingleActivator(LogicalKeyboardKey.arrowUp):
+        const ScrollIntent(direction: AxisDirection.up),
+    const SingleActivator(LogicalKeyboardKey.arrowDown):
+        const ScrollIntent(direction: AxisDirection.down),
+    const SingleActivator(LogicalKeyboardKey.arrowLeft):
+        const ScrollIntent(direction: AxisDirection.left),
+    const SingleActivator(LogicalKeyboardKey.arrowRight):
+        const ScrollIntent(direction: AxisDirection.right),
+    const SingleActivator(LogicalKeyboardKey.pageUp): const ScrollIntent(
         direction: AxisDirection.up, type: ScrollIncrementType.page),
-    SingleActivator(LogicalKeyboardKey.pageDown): ScrollIntent(
+    const SingleActivator(LogicalKeyboardKey.pageDown): const ScrollIntent(
         direction: AxisDirection.down, type: ScrollIncrementType.page),
   };
 

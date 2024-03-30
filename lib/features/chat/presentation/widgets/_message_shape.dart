@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+part of '../screens/chat_screen.dart';
 
-class MessageShape extends StatelessWidget {
+class _MessageShape extends StatelessWidget {
   final bool isSender;
   final String text;
   final bool tail;
@@ -11,7 +11,7 @@ class MessageShape extends StatelessWidget {
   final TextStyle textStyle;
   final BoxConstraints? constraints;
 
-  const MessageShape({
+  const _MessageShape({
     super.key,
     this.isSender = true,
     this.constraints,

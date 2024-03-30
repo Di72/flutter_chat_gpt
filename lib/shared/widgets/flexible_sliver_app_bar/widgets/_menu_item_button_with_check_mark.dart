@@ -1,11 +1,8 @@
-import 'package:flutter_chat_gpt/shared/commom_libs.dart';
-import 'package:flutter_chat_gpt/shared/widgets/custom_widgets/menu_anchor_custom.dart'
-    as custom;
+part of '../flexible_sliver_app_bar.dart';
 
-class MenuItemButtonWithCheckMark extends StatelessWidget {
-  const MenuItemButtonWithCheckMark(
+class _MenuItemButtonWithCheckMark extends StatelessWidget {
+  const _MenuItemButtonWithCheckMark(
     this.title, {
-    super.key,
     this.onPressed,
     this.isShowMark = false,
   });
@@ -27,17 +24,17 @@ class MenuItemButtonWithCheckMark extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             isShowMark
-                ? Icon(
+                ? const Icon(
                     AppIcons.checkmarkAlt,
                     color: AppColors.white,
                   )
-                : Gap(24),
-            Gap(6),
+                : const Gap(24),
+            const Gap(6),
             Text(
               title ?? "",
-              style: TextStyle(color: AppColors.white),
+              style: const TextStyle(color: AppColors.white),
             ),
-            Gap(4),
+            const Gap(4),
           ],
         ),
       ),

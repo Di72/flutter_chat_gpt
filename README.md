@@ -43,4 +43,4 @@ flutter pub get
 flutter run
 ```
 
-4. Paste your API_KEY for OpenAI
+4. Paste your API_KEY for OpenAI and turn on VPN

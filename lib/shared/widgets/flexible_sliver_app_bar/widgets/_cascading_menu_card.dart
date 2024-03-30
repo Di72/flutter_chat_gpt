@@ -1,10 +1,7 @@
-import 'package:flutter_chat_gpt/shared/commom_libs.dart';
-import 'package:flutter_chat_gpt/shared/widgets/custom_widgets/menu_anchor_custom.dart'
-    as custom;
+part of '../flexible_sliver_app_bar.dart';
 
-class CascadingMenuCard extends StatelessWidget {
-  const CascadingMenuCard({
-    super.key,
+class _CascadingMenuCard extends StatelessWidget {
+  const _CascadingMenuCard({
     required this.title,
     required this.subTitle,
     required this.icon,

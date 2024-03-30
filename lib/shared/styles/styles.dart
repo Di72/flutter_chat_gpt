@@ -41,6 +41,9 @@ class AppStyle {
 
   /// Shared sizes
   late final _Sizes sizes = _Sizes();
+
+  /// Padding and margin values
+  late final _Insets insets = _Insets(scale);
 }
 
 @immutable
@@ -50,24 +53,24 @@ class _Text {
   final String? _localeName;
 
   final Map<String, TextStyle> _titleFonts = {
-    'en': TextStyle(fontFamily: 'Tenor'),
+    'en': const TextStyle(fontFamily: 'Tenor'),
   };
 
   final Map<String, TextStyle> _monoTitleFonts = {
-    'en': TextStyle(fontFamily: 'B612Mono'),
+    'en': const TextStyle(fontFamily: 'B612Mono'),
   };
 
   final Map<String, TextStyle> _quoteFonts = {
-    'en': TextStyle(fontFamily: 'Cinzel'),
-    'zh': TextStyle(fontFamily: 'MaShanZheng'),
+    'en': const TextStyle(fontFamily: 'Cinzel'),
+    'zh': const TextStyle(fontFamily: 'MaShanZheng'),
   };
 
   final Map<String, TextStyle> _wonderTitleFonts = {
-    'en': TextStyle(fontFamily: 'Yeseva'),
+    'en': const TextStyle(fontFamily: 'Yeseva'),
   };
 
   final Map<String, TextStyle> _contentFonts = {
-    'en': TextStyle(fontFamily: 'Raleway', fontFeatures: const [
+    'en': const TextStyle(fontFamily: 'Raleway', fontFeatures: [
       FontFeature.enable('kern'),
     ]),
   };
@@ -156,4 +159,19 @@ class _Sizes {
   double get maxContentWidth2 => 600;
   double get maxContentWidth3 => 500;
   final Size minAppSize = const Size(380, 650);
+}
+
+@immutable
+class _Insets {
+  _Insets(this._scale);
+  final double _scale;
+
+  late final double xxs = 4 * _scale;
+  late final double xs = 8 * _scale;
+  late final double sm = 16 * _scale;
+  late final double md = 24 * _scale;
+  late final double lg = 32 * _scale;
+  late final double xl = 48 * _scale;
+  late final double xxl = 56 * _scale;
+  late final double offset = 80 * _scale;
 }

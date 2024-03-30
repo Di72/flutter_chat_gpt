@@ -39,6 +39,7 @@ dependencies:
   sentry_flutter: ^7.17.0
   sized_context: ^1.0.0+4
   statsfl: ^2.3.0
+  json_annotation: ^4.8.1
 
 
 dev_dependencies:
