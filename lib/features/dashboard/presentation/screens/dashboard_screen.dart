@@ -19,8 +19,8 @@ class DashboardScreen extends HookWidget {
     final animationController = useAnimationController();
     return Stack(
       children: [
-        _buildChatList(context, animationController),
-        _buildActionButton(animationController),
+        _buildChatList(context, animationController.forward),
+        _buildActionButton(animationController.forward),
       ],
     )
         .animate(
@@ -36,26 +36,25 @@ class DashboardScreen extends HookWidget {
         .fadeOut();
   }
 
-  Widget _buildChatList(
-      BuildContext context, AnimationController animationController) {
+  Widget _buildChatList(BuildContext context, Function() forwardAnimation) {
     return CustomScrollView(
       slivers: <Widget>[
         FlexibleSliverAppBar(
           title: AppLocalizations.of(context).chats,
         ),
         _ChatListWithDismiss(
-          forwardAnimation: animationController.forward,
+          forwardAnimation: forwardAnimation,
         ),
       ],
     );
   }
 
-  Widget _buildActionButton(AnimationController animationController) {
+  Widget _buildActionButton(Function() forwardAnimation) {
     return Positioned(
       bottom: 110,
       right: 70,
       child: _FloatingActionGptButton(
-        forwardAnimation: animationController.forward,
+        forwardAnimation: forwardAnimation,
       ),
     );
   }

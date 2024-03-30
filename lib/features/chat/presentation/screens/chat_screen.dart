@@ -49,7 +49,11 @@ class ChatScreen extends HookConsumerWidget {
     return Stack(
       children: [
         _buildMessageListWithAppBar(
-            scrollController, context, isNewChat, chatNotifier),
+          context,
+          scrollController,
+          isNewChat,
+          chatNotifier.isloading,
+        ),
         _buildChatInputField((msg) => chatNotifier.sendMessage(msg)),
       ],
     );
@@ -65,10 +69,11 @@ class ChatScreen extends HookConsumerWidget {
   }
 
   Widget _buildMessageListWithAppBar(
-      ScrollController scrollController,
-      BuildContext context,
-      bool isNewChat,
-      ChatAutoDisposeAsyncNotifier chatNotifier) {
+    BuildContext context,
+    ScrollController scrollController,
+    bool isNewChat,
+    bool isloading,
+  ) {
     return CustomScrollView(
       controller: scrollController,
       slivers: <Widget>[
@@ -86,7 +91,7 @@ class ChatScreen extends HookConsumerWidget {
         _ChatMessageList(),
         SliverToBoxAdapter(
           child: Visibility(
-            visible: chatNotifier.isloading,
+            visible: isloading,
             child: Align(
               alignment: Alignment.bottomCenter,
               child: _LoaderFadingCircle(
