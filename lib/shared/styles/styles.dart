@@ -44,6 +44,9 @@ class AppStyle {
 
   /// Padding and margin values
   late final _Insets insets = _Insets(scale);
+
+  /// Animation Durations
+  final _Times times = _Times();
 }
 
 @immutable
@@ -152,6 +155,14 @@ class _Text {
             spacingPc != null ? sizePx * spacingPc * 0.01 : style.letterSpacing,
         fontWeight: weight);
   }
+}
+
+@immutable
+class _Times {
+  final Duration fast = const Duration(milliseconds: 400);
+  final Duration med = const Duration(milliseconds: 600);
+  final Duration slow = const Duration(milliseconds: 900);
+  final Duration pageTransition = const Duration(milliseconds: 200);
 }
 
 class _Sizes {

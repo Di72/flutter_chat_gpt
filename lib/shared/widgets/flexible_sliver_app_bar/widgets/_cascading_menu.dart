@@ -84,7 +84,7 @@ class _CascadingMenu extends ConsumerWidget {
                   controller.isOpen ? controller.close() : controller.open(),
               child: IconWrapper(
                 icon: AppIcons.ellipsisCircle,
-                verticalPadding: 8,
+                verticalPadding: $styles.insets.xs,
                 color: isOpen
                     ? AppColors.activeGreen.withOpacity(.2)
                     : AppColors.activeGreen,

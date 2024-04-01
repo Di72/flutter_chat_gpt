@@ -32,7 +32,7 @@ class IconWrapper extends StatelessWidget {
         child: Icon(
           icon,
           color: color,
-          size: $styles.scale * 30,
+          size: 28,
         ),
       ),
     );

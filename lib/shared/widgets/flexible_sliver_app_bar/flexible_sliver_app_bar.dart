@@ -5,6 +5,7 @@ import 'package:flutter_chat_gpt/core/data/theme/theme_service.dart';
 import 'package:flutter_chat_gpt/core/domain/providers/localization_provider.dart';
 import 'package:flutter_chat_gpt/core/domain/providers/theme_provider.dart';
 import 'package:flutter_chat_gpt/shared/commom_libs.dart';
+import 'package:flutter_chat_gpt/shared/main/app_scaffold.dart';
 import 'package:flutter_chat_gpt/shared/widgets/custom_widgets/menu_anchor_custom.dart'
     as custom;
 
@@ -38,11 +39,11 @@ class FlexibleSliverAppBar extends StatelessWidget {
               name: 'Feedback',
               email: 'pro100st111m@gmail.com',
             ),
-            verticalPadding: 8,
+            verticalPadding: $styles.insets.xs,
             icon: AppIcons.pencilEllipsisRectangle,
             color: AppColors.activeGreen,
           ),
-          const SizedBox(width: 16),
+          Gap($styles.insets.sm),
           _CascadingMenu()
         ],
       ),
