@@ -45,11 +45,11 @@ class _CascadingMenu extends ConsumerWidget {
           onClose: () => isOpen = false,
           style: MenuStyle(
             backgroundColor: MaterialStateProperty.all(
-              AppColors.semiBlack.withOpacity(0.85),
+              AppColors.semiBlackWithOpacity,
             ),
             shape: MaterialStateProperty.all(
               RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular($styles.corners.sm),
               ),
             ),
           ),
@@ -58,7 +58,9 @@ class _CascadingMenu extends ConsumerWidget {
               decoration: const BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                      color: AppColors.secondarySystemFill, width: 1),
+                    color: AppColors.secondarySystemFill,
+                    width: 1,
+                  ),
                 ),
               ),
               child: _CascadingMenuCard(

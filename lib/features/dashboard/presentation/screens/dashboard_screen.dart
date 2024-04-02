@@ -38,7 +38,7 @@ class DashboardScreen extends HookWidget {
               controller.reverse(), // Reverse the animation once it's complete.
         )
         .moveX(
-          duration: $styles.times.fast,
+          duration: $styles.times.med,
           end: $styles.scale * 300,
           curve: Curves.easeIn,
         )

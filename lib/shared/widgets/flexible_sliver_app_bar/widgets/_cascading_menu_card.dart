@@ -17,14 +17,14 @@ class _CascadingMenuCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return custom.SubmenuButton(
       trailingIcon: Padding(
-        padding: const EdgeInsets.only(right: 8),
+        padding: EdgeInsets.only(right: $styles.insets.xs),
         child: Icon(icon, color: AppColors.white),
       ),
       alignmentOffset: const Offset(0, 8),
       menuStyle: MenuStyle(
         shadowColor: MaterialStateProperty.all(AppColors.black),
         backgroundColor: MaterialStateProperty.all(
-          AppColors.semiBlack.withOpacity(0.85),
+          AppColors.semiBlackWithOpacity,
         ),
         shape: MaterialStateProperty.all(
           RoundedRectangleBorder(
@@ -34,11 +34,11 @@ class _CascadingMenuCard extends StatelessWidget {
       ),
       menuChildren: cardChildren,
       child: Padding(
-        padding: const EdgeInsets.only(
-          top: 12,
-          bottom: 12,
-          right: 50,
-          left: 16,
+        padding: EdgeInsets.only(
+          top: $styles.insets.sm,
+          bottom: $styles.insets.sm,
+          right: $styles.insets.xxl,
+          left: $styles.insets.md,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

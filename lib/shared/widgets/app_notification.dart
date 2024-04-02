@@ -22,14 +22,14 @@ class AppNotification extends StatelessWidget {
             color: CupertinoTheme.of(context)
                 .scaffoldBackgroundColor
                 .withOpacity(0.7),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular($styles.corners.xs),
           ),
           child: Padding(
-            padding: const EdgeInsets.only(
-              top: 12,
-              bottom: 12,
-              left: 12,
-              right: 12,
+            padding: EdgeInsets.only(
+              top: $styles.insets.sm,
+              bottom: $styles.insets.sm,
+              left: $styles.insets.sm,
+              right: $styles.insets.sm,
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -43,7 +43,7 @@ class AppNotification extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 6),
+                Gap($styles.insets.xs),
                 const Center(
                   child: Icon(
                     CupertinoIcons.exclamationmark_circle_fill,
@@ -64,25 +64,26 @@ class AppNotification extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: Padding(
-        padding: const EdgeInsets.only(
-          top: 8,
-          left: 16,
-          right: 16,
+        padding: EdgeInsets.only(
+          top: $styles.insets.xs,
+          left: $styles.insets.md,
+          right: $styles.insets.md,
         ),
         child: SafeArea(
-            bottom: false,
-            child: SlideDismissible(
-              key: ValueKey(key),
-              direction: DismissDirection.up,
-              child: _buildContent(context),
-            )),
+          bottom: false,
+          child: SlideDismissible(
+            key: ValueKey(key),
+            direction: DismissDirection.up,
+            child: _buildContent(context),
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildContent(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular($styles.corners.xs),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
         child: child,

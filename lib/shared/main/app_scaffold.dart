@@ -15,7 +15,6 @@ class ChatGptAppScaffold extends ConsumerWidget {
     // Create a style object that will be passed down the widget tree
     style = AppStyle(
       screenSize: context.sizePx,
-      localeName: AppLocalizations.of(context).localeName,
     );
     return KeyedSubtree(
       key: ValueKey($styles.scale),

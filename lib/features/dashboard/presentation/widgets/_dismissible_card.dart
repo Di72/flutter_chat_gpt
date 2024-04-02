@@ -23,13 +23,13 @@ class _DismissibleCard extends StatelessWidget {
         context.push(ScreenPaths.chat(item.id));
       },
       child: Container(
-        padding: const EdgeInsets.only(
-          left: 24,
-          bottom: 12,
-          top: 12,
-          right: 4,
+        padding: EdgeInsets.only(
+          left: $styles.insets.lg,
+          bottom: $styles.insets.sm,
+          top: $styles.insets.sm,
+          right: $styles.insets.xxs,
         ),
-        margin: const EdgeInsets.only(bottom: 2),
+        margin: EdgeInsets.only(bottom: $styles.insets.xxs),
         decoration: BoxDecoration(
           color: CupertinoTheme.of(context).primaryColor,
           borderRadius: _getBorderRadius(index, length),
@@ -45,7 +45,7 @@ class _DismissibleCard extends StatelessWidget {
                   height: 1,
                   color: CupertinoTheme.of(context).primaryContrastingColor),
             ),
-            const Gap(4),
+            Gap($styles.insets.xxs),
             Text(
               "${DateFormat.Md().format(date)} ${DateFormat.Hms().format(date)}",
               style: const TextStyle(

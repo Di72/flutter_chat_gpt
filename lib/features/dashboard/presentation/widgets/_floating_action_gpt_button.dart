@@ -30,7 +30,7 @@ class _FloatingActionGptButton extends StatelessWidget {
           ],
         ),
         child: Padding(
-          padding: const EdgeInsets.all(15),
+          padding: EdgeInsets.all($styles.insets.md),
           child: RiveAnimation.asset(RivePaths.gptLogo),
         ),
       ),

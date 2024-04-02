@@ -16,9 +16,9 @@ class _MenuItemButtonWithCheckMark extends StatelessWidget {
     return custom.MenuItemButton(
       onPressed: onPressed,
       child: Padding(
-        padding: const EdgeInsets.only(
-          top: 4,
-          bottom: 4,
+        padding: EdgeInsets.only(
+          top: $styles.insets.xxs,
+          bottom: $styles.insets.xxs,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -28,13 +28,13 @@ class _MenuItemButtonWithCheckMark extends StatelessWidget {
                     AppIcons.checkmarkAlt,
                     color: AppColors.white,
                   )
-                : const Gap(24),
-            const Gap(6),
+                : Gap($styles.insets.md),
+            Gap($styles.insets.xs),
             Text(
               title ?? "",
               style: const TextStyle(color: AppColors.white),
             ),
-            const Gap(4),
+            Gap($styles.insets.xxs),
           ],
         ),
       ),

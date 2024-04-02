@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_chat_gpt/shared/commom_libs.dart';
 
-var brightness =
+Brightness brightness =
     SchedulerBinding.instance.platformDispatcher.platformBrightness;
 
 const _lightTheme = CupertinoThemeData(

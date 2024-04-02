@@ -42,7 +42,7 @@ class ChatScreen extends HookConsumerWidget {
         if (scrollController.hasClients) {
           scrollController.animateTo(
             scrollController.position.maxScrollExtent,
-            duration: 200.milliseconds,
+            duration: $styles.times.fast,
             curve: Curves.easeOut,
           );
         }
@@ -109,9 +109,9 @@ class ChatScreen extends HookConsumerWidget {
             ),
           ),
         ),
-        const SliverToBoxAdapter(
+        SliverToBoxAdapter(
           child: Gap(
-            65,
+            $styles.insets.offset,
           ),
         ),
       ],

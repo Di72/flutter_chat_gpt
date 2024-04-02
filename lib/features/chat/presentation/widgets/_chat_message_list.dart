@@ -5,10 +5,10 @@ class _ChatMessageList extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final chatState = ref.watch(chatProvider);
     return SliverPadding(
-      padding: const EdgeInsets.only(
-        left: 16,
-        right: 16,
-        top: 16,
+      padding: EdgeInsets.only(
+        left: $styles.insets.md,
+        right: $styles.insets.md,
+        top: $styles.insets.md,
       ),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(

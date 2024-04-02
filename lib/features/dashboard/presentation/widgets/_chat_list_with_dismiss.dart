@@ -34,11 +34,11 @@ class _ChatListWithDismiss extends HookConsumerWidget {
                         borderRadius: _getBorderRadius(index, chats!.length),
                         color: Colors.red,
                       ),
-                      child: const Align(
+                      child: Align(
                         alignment: Alignment.centerRight,
                         child: Padding(
-                          padding: EdgeInsets.only(right: 28),
-                          child: Icon(
+                          padding: EdgeInsets.only(right: $styles.insets.lg),
+                          child: const Icon(
                             AppIcons.trashFill,
                             color: AppColors.white,
                             size: 28,
