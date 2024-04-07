@@ -13,6 +13,7 @@
 * Responsive styles
 * Multi-Platform
 * Sentry
+* Dartz
 * Feedback for Sentry
 * Isar database
 * Dio
