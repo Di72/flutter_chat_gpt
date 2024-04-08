@@ -29,7 +29,6 @@ class ChatAutoDisposeAsyncNotifier extends AutoDisposeAsyncNotifier<ChatState> {
 
   // Sets the chat state based on a given chat ID. Loads chat data from Isar if available.
   Future<void> setState(String id) async {
-    await build(); // Ensure setup is complete.
     final previousState =
         await _isar?.chatCollections.get(int.parse(id)); // Load chat from Isar.
 

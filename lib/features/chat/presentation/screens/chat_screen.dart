@@ -29,12 +29,12 @@ class ChatScreen extends HookConsumerWidget {
     final chatNotifier = ref.read(chatProvider.notifier);
 
     // Fetch chat data if this is not a new chat.
-    if (!isNewChat) {
-      useEffect(() {
+    useEffect(() {
+      if (!isNewChat && chatState.hasValue) {
         chatNotifier.setState(chatId!);
-        return null;
-      }, []);
-    }
+      }
+      return null;
+    }, [isNewChat, chatState.hasValue]);
 
     // Auto-scroll to the bottom of the chat when new messages are added.
     useEffect(() {
