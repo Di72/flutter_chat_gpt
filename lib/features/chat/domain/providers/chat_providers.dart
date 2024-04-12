@@ -11,8 +11,8 @@ final chatDatasourceProvider =
 );
 
 final chatRepositoryProvider = Provider<ChatRepository>((ref) {
-  final networkService = ref.watch(networkServiceProvider);
-  final datasource = ref.watch(chatDatasourceProvider(networkService));
+  final dioService = ref.watch(dioServiceProvider);
+  final datasource = ref.watch(chatDatasourceProvider(dioService));
   final repository = ChatRepositoryImpl(datasource);
 
   return repository;

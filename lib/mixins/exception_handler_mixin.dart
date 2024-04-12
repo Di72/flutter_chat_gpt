@@ -6,7 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_chat_gpt/core/data/network/network_service.dart';
 import 'package:flutter_chat_gpt/core/domain/models/either.dart';
 import 'package:flutter_chat_gpt/core/domain/models/response.dart' as response;
-import 'package:flutter_chat_gpt/shared/exceptions/http_exception.dart';
+import 'package:flutter_chat_gpt/exceptions/http_exception.dart';
 
 mixin ExceptionHandlerMixin on NetworkService {
   Future<Either<AppException, response.Response>>

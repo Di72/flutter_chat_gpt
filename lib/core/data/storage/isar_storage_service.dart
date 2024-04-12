@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter_chat_gpt/core/domain/collections/chat_collection.dart';
+import 'package:flutter_chat_gpt/shared/collections/chat_collection.dart';
 import 'package:flutter_chat_gpt/core/domain/collections/localization_collection.dart';
 import 'package:flutter_chat_gpt/core/domain/collections/theme_collection.dart';
 import 'package:isar/isar.dart';

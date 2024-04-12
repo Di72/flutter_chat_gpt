@@ -1,5 +1,5 @@
-import 'package:flutter_chat_gpt/core/domain/collections/chat_collection.dart';
-import 'package:flutter_chat_gpt/core/domain/models/chat_message/chat_message.dart';
+import 'package:flutter_chat_gpt/shared/collections/chat_collection.dart';
+import 'package:flutter_chat_gpt/shared/models/chat_message/chat_message.dart';
 import 'package:flutter_chat_gpt/core/domain/providers/isar_storage_service_provider.dart';
 import 'package:flutter_chat_gpt/features/chat/domain/providers/chat_providers.dart';
 import 'package:flutter_chat_gpt/features/chat/domain/repositories/chat_repository.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter_chat_gpt/core/domain/models/either.dart';
 import 'package:flutter_chat_gpt/core/domain/models/response.dart';
-import 'package:flutter_chat_gpt/shared/exceptions/http_exception.dart';
+import 'package:flutter_chat_gpt/exceptions/http_exception.dart';
 
 abstract class NetworkService {
   String get baseUrl;

@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_chat_gpt/core/domain/providers/localization_provider.dart';
 import 'package:flutter_chat_gpt/shared/commom_libs.dart';
 import 'package:flutter_chat_gpt/core/domain/providers/theme_provider.dart';
-import 'package:flutter_chat_gpt/shared/utils/app_shortcuts.dart';
+import 'package:flutter_chat_gpt/core/utils/app_shortcuts.dart';
 import 'package:overlay_support/overlay_support.dart';
 
 class ChatGptApp extends ConsumerWidget {

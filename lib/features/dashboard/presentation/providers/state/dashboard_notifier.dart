@@ -1,4 +1,4 @@
-import 'package:flutter_chat_gpt/core/domain/collections/chat_collection.dart';
+import 'package:flutter_chat_gpt/shared/collections/chat_collection.dart';
 import 'package:flutter_chat_gpt/core/domain/providers/isar_storage_service_provider.dart';
 import 'package:flutter_chat_gpt/features/chat/presentation/providers/state/chat_state.dart';
 import 'package:flutter_chat_gpt/features/dashboard/presentation/providers/state/dashboard_state.dart';

@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter_chat_gpt/core/domain/models/chat_message/chat_message.dart';
-import 'package:flutter_chat_gpt/shared/exceptions/http_exception.dart';
+import 'package:flutter_chat_gpt/shared/models/chat_message/chat_message.dart';
+import 'package:flutter_chat_gpt/exceptions/http_exception.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'chat_state.freezed.dart';

@@ -1,5 +1,7 @@
+///TODO DELETe
+
 import 'package:flutter_chat_gpt/core/domain/models/either.dart';
-import 'package:flutter_chat_gpt/shared/exceptions/http_exception.dart';
+import 'package:flutter_chat_gpt/exceptions/http_exception.dart';
 
 class Response {
   final int statusCode;

@@ -3,9 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_chat_gpt/shared/commom_libs.dart';
 import 'package:flutter_chat_gpt/core/data/network/network_service.dart';
 import 'package:flutter_chat_gpt/core/domain/models/either.dart';
-import 'package:flutter_chat_gpt/shared/exceptions/http_exception.dart';
+import 'package:flutter_chat_gpt/exceptions/http_exception.dart';
 import 'package:flutter_chat_gpt/core/domain/models/response.dart' as response;
-import 'package:flutter_chat_gpt/shared/mixins/exception_handler_mixin.dart';
+import 'package:flutter_chat_gpt/mixins/exception_handler_mixin.dart';
 
 class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
   final Dio dio; // Dio instance for making HTTP requests.

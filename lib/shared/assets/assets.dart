@@ -18,6 +18,5 @@ class AppIcons {
       CupertinoIcons.circle_lefthalf_fill;
   static const IconData ellipsisCircle = CupertinoIcons.ellipsis_circle;
   static const IconData trashFill = CupertinoIcons.trash_fill;
-  static const IconData pencilEllipsisRectangle =
-      CupertinoIcons.pencil_ellipsis_rectangle;
+  static const IconData squarePencil = CupertinoIcons.square_pencil;
 }
