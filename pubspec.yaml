@@ -43,6 +43,7 @@ dependencies:
   statsfl: ^2.3.0
   injectable: ^2.4.1
   flutter_bloc: ^8.1.5
+  get_it: ^7.6.9
 
 
 dev_dependencies:
@@ -56,6 +57,7 @@ dev_dependencies:
   isar_generator: ^3.1.0+1
   json_serializable: ^6.7.1
   retrofit_generator: ^8.1.0
+  injectable_generator: ^2.4.2
 
 
 

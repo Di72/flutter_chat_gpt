@@ -19,14 +19,14 @@ class _ChatApi implements ChatApi {
   String? baseUrl;
 
   @override
-  Future<Either<AppException, CompletionsResponseModel>> sendMessage(
+  Future<CompletionsResponseModel> sendMessage(
       CompletionsRequestModel completionsRequestModel) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = completionsRequestModel;
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<Either<AppException, CompletionsResponseModel>>(Options(
+        _setStreamType<CompletionsResponseModel>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -42,8 +42,7 @@ class _ChatApi implements ChatApi {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value =
-        Either<AppException, CompletionsResponseModel>.fromJson(_result.data!);
+    final value = CompletionsResponseModel.fromJson(_result.data!);
     return value;
   }
 

@@ -13,4 +13,5 @@ class CompletionsRequestModel with _$CompletionsRequestModel {
 
   factory CompletionsRequestModel.fromJson(Map<String, dynamic> json) =>
       _$CompletionsRequestModelFromJson(json);
+  // Map<String, dynamic> toJson() => _$CompletionsRequestModelToJson(this);
 }

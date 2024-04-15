@@ -1,65 +1,136 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_chat_gpt/shared/commom_libs.dart';
-import 'package:flutter_chat_gpt/core/data/network/network_service.dart';
-import 'package:flutter_chat_gpt/core/domain/models/either.dart';
-import 'package:flutter_chat_gpt/exceptions/http_exception.dart';
-import 'package:flutter_chat_gpt/core/domain/models/response.dart' as response;
-import 'package:flutter_chat_gpt/mixins/exception_handler_mixin.dart';
+import 'package:injectable/injectable.dart';
 
-class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
-  final Dio dio; // Dio instance for making HTTP requests.
+@module
+abstract class DioProvider {
+  @lazySingleton
+  Dio dio() {
+    Dio dio = Dio(
+      BaseOptions(
+        receiveTimeout: 10000.ms,
+        connectTimeout: 10000.ms,
+        sendTimeout: 10000.ms,
+        headers: {
+          'Authorization': 'Bearer $API_KEY',
+          "Content-Type": "application/json",
+        },
+      ),
+    );
+    dio.interceptors.add(AppInterceptors(dio));
 
-  DioNetworkService(this.dio) {
-    // Exclude setup during tests to avoid errors.
-    if (!kTestMode) {
-      dio.options = dioBaseOptions; // Apply base options to Dio.
-      // If in debug mode, add an interceptor for logging request and response body for debugging purposes.
-      if (kDebugMode) {
-        dio.interceptors
-            .add(LogInterceptor(requestBody: true, responseBody: true));
-      }
+    return dio;
+  }
+}
+
+class AppInterceptors extends Interceptor {
+  final Dio dio;
+
+  AppInterceptors(this.dio);
+
+  @override
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    switch (err.type) {
+      case DioExceptionType.connectionTimeout:
+      case DioExceptionType.sendTimeout:
+      case DioExceptionType.receiveTimeout:
+      case DioExceptionType.connectionError:
+        throw DeadlineExceededException(err.requestOptions);
+      case DioExceptionType.badCertificate:
+        throw DeadlineExceededException(err.requestOptions);
+      case DioExceptionType.badResponse:
+        switch (err.response?.statusCode) {
+          case 400:
+            throw BadRequestException(err.requestOptions);
+          case 401:
+            throw UnauthorizedException(err.requestOptions);
+          case 404:
+            throw NotFoundException(err.requestOptions);
+          case 409:
+            throw ConflictException(err.requestOptions);
+          case 500:
+            throw InternalServerErrorException(err.requestOptions);
+        }
+        break;
+      case DioExceptionType.cancel:
+        break;
+      case DioExceptionType.unknown:
+        throw NoInternetConnectionException(err.requestOptions);
     }
+
+    return handler.next(err);
   }
+}
 
-  // BaseOptions configuration for Dio.
-  BaseOptions get dioBaseOptions => BaseOptions(
-        baseUrl: baseUrl,
-        headers: headers,
-      );
+class BadRequestException extends DioException {
+  BadRequestException(RequestOptions r) : super(requestOptions: r);
 
-  // Getter for the base URL, fetched from shared constants.
   @override
-  String get baseUrl => BASE_URL;
-
-  // Getter for default headers, including authorization and content type.
-  @override
-  Map<String, Object> get headers => {
-        'Authorization': 'Bearer $API_KEY',
-        "Content-Type": "application/json",
-      };
-
-  // Performs a POST request to the specified endpoint with optional data.
-  // Uses handleException to wrap Dio's post method for error handling.
-  @override
-  Future<Either<AppException, response.Response>> post(String endpoint,
-      {Map<String, dynamic>? data}) {
-    final res = handleException(
-      () => dio.post(endpoint, data: data),
-      endpoint: endpoint,
-    );
-    return res;
+  String toString() {
+    return 'Invalid request';
   }
+}
 
-  // Performs a GET request to the specified endpoint with optional query parameters.
-  // Uses handleException to wrap Dio's get method for error handling.
+class InternalServerErrorException extends DioException {
+  InternalServerErrorException(RequestOptions r) : super(requestOptions: r);
+
   @override
-  Future<Either<AppException, response.Response>> get(String endpoint,
-      {Map<String, dynamic>? queryParameters}) {
-    final res = handleException(
-      () => dio.get(endpoint, queryParameters: queryParameters),
-      endpoint: endpoint,
-    );
-    return res;
+  String toString() {
+    return 'Unknown error occurred, please try again later.';
+  }
+}
+
+class ConflictException extends DioException {
+  ConflictException(RequestOptions r) : super(requestOptions: r);
+
+  @override
+  String toString() {
+    return 'Conflict occurred';
+  }
+}
+
+class UnauthorizedException extends DioException {
+  UnauthorizedException(RequestOptions r) : super(requestOptions: r);
+
+  @override
+  String toString() {
+    return 'Access denied';
+  }
+}
+
+class NotFoundException extends DioException {
+  NotFoundException(RequestOptions r) : super(requestOptions: r);
+
+  @override
+  String toString() {
+    return 'The requested information could not be found';
+  }
+}
+
+class NoInternetConnectionException extends DioException {
+  NoInternetConnectionException(RequestOptions r) : super(requestOptions: r);
+
+  @override
+  String toString() {
+    return 'No internet connection detected, please try again.';
+  }
+}
+
+class DeadlineExceededException extends DioException {
+  DeadlineExceededException(RequestOptions r) : super(requestOptions: r);
+
+  @override
+  String toString() {
+    return 'The connection has timed out, please try again.';
+  }
+}
+
+class BadCertificateException extends DioException {
+  BadCertificateException(RequestOptions r) : super(requestOptions: r);
+
+  @override
+  String toString() {
+    return 'Problem with the certificate.';
   }
 }

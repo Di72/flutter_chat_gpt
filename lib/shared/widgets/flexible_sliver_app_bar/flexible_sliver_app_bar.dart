@@ -40,7 +40,7 @@ class FlexibleSliverAppBar extends StatelessWidget {
               email: 'pro100st111m@gmail.com',
             ),
             verticalPadding: $styles.insets.xs,
-            icon: AppIcons.squarePencil,
+            icon: AppIcons.pencilEllipsisRectangle,
             color: AppColors.activeGreen,
           ),
           Gap($styles.insets.sm),

@@ -15,7 +15,7 @@ class ChatAutoDisposeAsyncNotifier extends AutoDisposeAsyncNotifier<ChatState> {
   Isar? _isar; // Isar database instance for local storage.
 
   // Helper getter to easily check if the current state is loading.
-  bool get isloading => state.value?.state == const State.loading();
+  bool get isloading => state.value?.status == const Status.loading();
 
   // Initial setup for the notifier, including obtaining necessary instances from providers.
   @override
@@ -37,7 +37,7 @@ class ChatAutoDisposeAsyncNotifier extends AutoDisposeAsyncNotifier<ChatState> {
       ChatState(
         id: previousState?.id.toString() ?? "",
         messages: previousState?.messages ?? [],
-        state: const State.success(),
+        stastatuste: const Status.success(),
       ),
     );
   }
@@ -52,7 +52,7 @@ class ChatAutoDisposeAsyncNotifier extends AutoDisposeAsyncNotifier<ChatState> {
 
     // Set state to loading and update messages.
     state = AsyncData(
-      state.value!.copyWith(state: const State.loading(), messages: messages),
+      state.value!.copyWith(status: const Status.loading(), messages: messages),
     );
 
     // Update chat storage with the new list of messages.
@@ -68,7 +68,7 @@ class ChatAutoDisposeAsyncNotifier extends AutoDisposeAsyncNotifier<ChatState> {
         // If error, update state to reflect failure.
         state = AsyncData(
           state.value!.copyWith(
-            state: State.failure(error),
+            status: Status.failure(error),
           ),
         );
       },
@@ -83,7 +83,7 @@ class ChatAutoDisposeAsyncNotifier extends AutoDisposeAsyncNotifier<ChatState> {
         ];
         state = AsyncData(
           state.value!.copyWith(
-            state: const State.success(),
+            status: const Status.success(),
             messages: responseMessages.cast<ChatMessage>(),
           ),
         );

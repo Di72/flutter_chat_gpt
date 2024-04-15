@@ -15,12 +15,12 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
-mixin _$State {
+mixin _$Status {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(AppException exception) failure,
+    required TResult Function(dynamic error) failure,
     required TResult Function() success,
   }) =>
       throw _privateConstructorUsedError;
@@ -28,7 +28,7 @@ mixin _$State {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(AppException exception)? failure,
+    TResult? Function(dynamic error)? failure,
     TResult? Function()? success,
   }) =>
       throw _privateConstructorUsedError;
@@ -36,7 +36,7 @@ mixin _$State {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(AppException exception)? failure,
+    TResult Function(dynamic error)? failure,
     TResult Function()? success,
     required TResult orElse(),
   }) =>
@@ -69,15 +69,15 @@ mixin _$State {
 }
 
 /// @nodoc
-abstract class $StateCopyWith<$Res> {
-  factory $StateCopyWith(State value, $Res Function(State) then) =
-      _$StateCopyWithImpl<$Res, State>;
+abstract class $StatusCopyWith<$Res> {
+  factory $StatusCopyWith(Status value, $Res Function(Status) then) =
+      _$StatusCopyWithImpl<$Res, Status>;
 }
 
 /// @nodoc
-class _$StateCopyWithImpl<$Res, $Val extends State>
-    implements $StateCopyWith<$Res> {
-  _$StateCopyWithImpl(this._value, this._then);
+class _$StatusCopyWithImpl<$Res, $Val extends Status>
+    implements $StatusCopyWith<$Res> {
+  _$StatusCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -94,7 +94,7 @@ abstract class _$$InitialImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$InitialImplCopyWithImpl<$Res>
-    extends _$StateCopyWithImpl<$Res, _$InitialImpl>
+    extends _$StatusCopyWithImpl<$Res, _$InitialImpl>
     implements _$$InitialImplCopyWith<$Res> {
   __$$InitialImplCopyWithImpl(
       _$InitialImpl _value, $Res Function(_$InitialImpl) _then)
@@ -108,7 +108,7 @@ class _$InitialImpl implements Initial {
 
   @override
   String toString() {
-    return 'State.initial()';
+    return 'Status.initial()';
   }
 
   @override
@@ -125,7 +125,7 @@ class _$InitialImpl implements Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(AppException exception) failure,
+    required TResult Function(dynamic error) failure,
     required TResult Function() success,
   }) {
     return initial();
@@ -136,7 +136,7 @@ class _$InitialImpl implements Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(AppException exception)? failure,
+    TResult? Function(dynamic error)? failure,
     TResult? Function()? success,
   }) {
     return initial?.call();
@@ -147,7 +147,7 @@ class _$InitialImpl implements Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(AppException exception)? failure,
+    TResult Function(dynamic error)? failure,
     TResult Function()? success,
     required TResult orElse(),
   }) {
@@ -195,7 +195,7 @@ class _$InitialImpl implements Initial {
   }
 }
 
-abstract class Initial implements State {
+abstract class Initial implements Status {
   const factory Initial() = _$InitialImpl;
 }
 
@@ -208,7 +208,7 @@ abstract class _$$LoadingImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$LoadingImplCopyWithImpl<$Res>
-    extends _$StateCopyWithImpl<$Res, _$LoadingImpl>
+    extends _$StatusCopyWithImpl<$Res, _$LoadingImpl>
     implements _$$LoadingImplCopyWith<$Res> {
   __$$LoadingImplCopyWithImpl(
       _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
@@ -222,7 +222,7 @@ class _$LoadingImpl implements Loading {
 
   @override
   String toString() {
-    return 'State.loading()';
+    return 'Status.loading()';
   }
 
   @override
@@ -239,7 +239,7 @@ class _$LoadingImpl implements Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(AppException exception) failure,
+    required TResult Function(dynamic error) failure,
     required TResult Function() success,
   }) {
     return loading();
@@ -250,7 +250,7 @@ class _$LoadingImpl implements Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(AppException exception)? failure,
+    TResult? Function(dynamic error)? failure,
     TResult? Function()? success,
   }) {
     return loading?.call();
@@ -261,7 +261,7 @@ class _$LoadingImpl implements Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(AppException exception)? failure,
+    TResult Function(dynamic error)? failure,
     TResult Function()? success,
     required TResult orElse(),
   }) {
@@ -309,7 +309,7 @@ class _$LoadingImpl implements Loading {
   }
 }
 
-abstract class Loading implements State {
+abstract class Loading implements Status {
   const factory Loading() = _$LoadingImpl;
 }
 
@@ -319,12 +319,12 @@ abstract class _$$FailureImplCopyWith<$Res> {
           _$FailureImpl value, $Res Function(_$FailureImpl) then) =
       __$$FailureImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({AppException exception});
+  $Res call({dynamic error});
 }
 
 /// @nodoc
 class __$$FailureImplCopyWithImpl<$Res>
-    extends _$StateCopyWithImpl<$Res, _$FailureImpl>
+    extends _$StatusCopyWithImpl<$Res, _$FailureImpl>
     implements _$$FailureImplCopyWith<$Res> {
   __$$FailureImplCopyWithImpl(
       _$FailureImpl _value, $Res Function(_$FailureImpl) _then)
@@ -333,13 +333,10 @@ class __$$FailureImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? exception = null,
+    Object? error = freezed,
   }) {
     return _then(_$FailureImpl(
-      null == exception
-          ? _value.exception
-          : exception // ignore: cast_nullable_to_non_nullable
-              as AppException,
+      freezed == error ? _value.error! : error,
     ));
   }
 }
@@ -347,14 +344,14 @@ class __$$FailureImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$FailureImpl implements Failure {
-  const _$FailureImpl(this.exception);
+  const _$FailureImpl(this.error);
 
   @override
-  final AppException exception;
+  final dynamic error;
 
   @override
   String toString() {
-    return 'State.failure(exception: $exception)';
+    return 'Status.failure(error: $error)';
   }
 
   @override
@@ -362,12 +359,12 @@ class _$FailureImpl implements Failure {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$FailureImpl &&
-            (identical(other.exception, exception) ||
-                other.exception == exception));
+            const DeepCollectionEquality().equals(other.error, error));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, exception);
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(error));
 
   @JsonKey(ignore: true)
   @override
@@ -380,10 +377,10 @@ class _$FailureImpl implements Failure {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(AppException exception) failure,
+    required TResult Function(dynamic error) failure,
     required TResult Function() success,
   }) {
-    return failure(exception);
+    return failure(error);
   }
 
   @override
@@ -391,10 +388,10 @@ class _$FailureImpl implements Failure {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(AppException exception)? failure,
+    TResult? Function(dynamic error)? failure,
     TResult? Function()? success,
   }) {
-    return failure?.call(exception);
+    return failure?.call(error);
   }
 
   @override
@@ -402,12 +399,12 @@ class _$FailureImpl implements Failure {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(AppException exception)? failure,
+    TResult Function(dynamic error)? failure,
     TResult Function()? success,
     required TResult orElse(),
   }) {
     if (failure != null) {
-      return failure(exception);
+      return failure(error);
     }
     return orElse();
   }
@@ -450,10 +447,10 @@ class _$FailureImpl implements Failure {
   }
 }
 
-abstract class Failure implements State {
-  const factory Failure(final AppException exception) = _$FailureImpl;
+abstract class Failure implements Status {
+  const factory Failure(final dynamic error) = _$FailureImpl;
 
-  AppException get exception;
+  dynamic get error;
   @JsonKey(ignore: true)
   _$$FailureImplCopyWith<_$FailureImpl> get copyWith =>
       throw _privateConstructorUsedError;
@@ -468,7 +465,7 @@ abstract class _$$SuccessImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$SuccessImplCopyWithImpl<$Res>
-    extends _$StateCopyWithImpl<$Res, _$SuccessImpl>
+    extends _$StatusCopyWithImpl<$Res, _$SuccessImpl>
     implements _$$SuccessImplCopyWith<$Res> {
   __$$SuccessImplCopyWithImpl(
       _$SuccessImpl _value, $Res Function(_$SuccessImpl) _then)
@@ -482,7 +479,7 @@ class _$SuccessImpl implements Success {
 
   @override
   String toString() {
-    return 'State.success()';
+    return 'Status.success()';
   }
 
   @override
@@ -499,7 +496,7 @@ class _$SuccessImpl implements Success {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(AppException exception) failure,
+    required TResult Function(dynamic error) failure,
     required TResult Function() success,
   }) {
     return success();
@@ -510,7 +507,7 @@ class _$SuccessImpl implements Success {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(AppException exception)? failure,
+    TResult? Function(dynamic error)? failure,
     TResult? Function()? success,
   }) {
     return success?.call();
@@ -521,7 +518,7 @@ class _$SuccessImpl implements Success {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(AppException exception)? failure,
+    TResult Function(dynamic error)? failure,
     TResult Function()? success,
     required TResult orElse(),
   }) {
@@ -569,6 +566,6 @@ class _$SuccessImpl implements Success {
   }
 }
 
-abstract class Success implements State {
+abstract class Success implements Status {
   const factory Success() = _$SuccessImpl;
 }

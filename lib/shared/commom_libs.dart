@@ -19,3 +19,5 @@ export 'package:gap/gap.dart';
 export 'package:go_router/go_router.dart';
 export 'package:hooks_riverpod/hooks_riverpod.dart';
 export 'package:sized_context/sized_context.dart';
+export 'package:injectable/injectable.dart';
+export 'package:get_it/get_it.dart';
