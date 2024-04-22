@@ -41,6 +41,7 @@ git clone https://github.com/Di72/flutter_chat_gpt
 
 ```
 flutter pub get
+flutter packages pub run build_runner build
 flutter run
 ```
 
